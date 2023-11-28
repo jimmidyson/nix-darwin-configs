@@ -8,6 +8,7 @@
     onActivation.upgrade = true;
     onActivation.cleanup = "zap";
     brews = [
+      "docker-mac-net-connect"
       "pinentry-mac"
       "skhd"
       "watch"
@@ -25,6 +26,7 @@
       "homebrew/core"
       "homebrew/services"
       "koekeishiya/formulae"
+      "chipmk/tap"
     ];
     casks = [
       "firefox"
