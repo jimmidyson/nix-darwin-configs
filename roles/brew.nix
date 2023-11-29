@@ -34,6 +34,7 @@
       "font-fira-code"
       "font-iosevka-nerd-font"
       "iterm2"
+      "notunes"
       "tailscale"
     ];
   };
