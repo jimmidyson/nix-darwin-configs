@@ -29,7 +29,6 @@ in {
     fzf
     gcc
     gh
-    git
     github-cli
     gitleaks
     gnumake

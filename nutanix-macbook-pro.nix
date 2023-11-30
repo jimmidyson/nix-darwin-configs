@@ -26,6 +26,7 @@ in {
     users.${username} = { ... }: {
       imports = [
         home-manager/darwin.nix
+        home-manager/git.nix
       ];
     };
   };
