@@ -69,6 +69,20 @@
         nodeStatusMaxImages: -1
       EOF
       }
+
+      yubikeytouchoff() {
+        ykman -d 20692469 openpgp keys set-touch sig off -f
+        ykman -d 20692469 openpgp keys set-touch aut off -f
+        ykman -d 20692469 openpgp keys set-touch enc off -f
+      }
+
+      yubikeytouchon() {
+        ykman -d 20692469 openpgp keys set-touch sig cached -f
+        ykman -d 20692469 openpgp keys set-touch aut cached -f
+        ykman -d 20692469 openpgp keys set-touch enc cached -f
+      }
+
+      export GITHUB_TOKEN = "$(gopass -n -o github/hub)";
     '';
 
     oh-my-zsh = {
@@ -147,11 +161,6 @@
       DO_NOT_TRACK = "1";
       DOCKER_HOST = "unix:///Users/jimmi.dyson/.local/share/containers/podman/machine/podman.sock";
       MCFLY_RESULTS_SORT = "LAST_RUN";
-
-      GPG_TTY = "$(tty)";
-      SSH_AUTH_SOCK = "$(gpgconf --list-dirs agent-ssh-socket)";
-
-      GITHUB_TOKEN = "$(gopass -n -o github/hub)";
     };
   };
 }
