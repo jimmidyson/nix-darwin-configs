@@ -27,17 +27,21 @@
         features = "decorations";
         navigate = true;
         light = false;
-        side-by-side = true;
+        interactive = {
+          keep-plus-minus-markers = false;
+        };
         decorations = {
-          commit-decoration-style = "blue ol";
-          commit-style = "raw";
-          file-style = "omit";
-          hunk-header-decoration-style = "blue box";
-          hunk-header-file-style = "red";
-          hunk-header-line-number-style = "#067a00";
-          hunk-header-style = "file line-number syntax";
+          commit-decoration-style = "bold yellow box ul";
+          file-decoration-style = "none";
+          file-style = "bold yellow ul";
+          hunk-header-decoration-style = "cyan box ul";
         };
       };
+    };
+
+    aliases = {
+      gone = "! git fetch -p && git for-each-ref --format '%(refname:short) %(upstream:track)' | awk '$2 == \"[gone]\" {print $1}' | xargs -t -I{} git branch -D {}";
+      aliases = "config --get-regexp '^alias\\.'";
     };
 
     extraConfig = {
