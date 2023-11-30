@@ -37,11 +37,6 @@ in {
       FXEnableExtensionChangeWarning = false;
       CreateDesktop = false;
     };
-    trackpad = {
-      Clicking = true;
-      TrackpadThreeFingerDrag = true;
-      Dragging = true;
-    };
     SoftwareUpdate.AutomaticallyInstallMacOSUpdates = true;
   };
    # Add flake support
