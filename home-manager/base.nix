@@ -14,41 +14,34 @@ in {
 
   home.packages = with pkgs; [
     bash
-    bat
     bind
     coreutils
+    crane
     curl
     delta
-    direnv
     docker
     dos2unix
-    eza
     fd
     file
     findutils
     fzf
     gcc
-    gh
-    github-cli
     gitleaks
     gnumake
     gnupg
     gnused
-    go
     gojq
     gomuks
     gopass
     gvproxy
     htop
     inetutils
-    jq
     kind
     kubectl
     lefthook
     libarchive
     libvirt
     lima
-    mcfly
     nixpkgs-fmt
     nmap
     openssl
@@ -65,8 +58,7 @@ in {
     tree
     unzip
     vale
+    yubikey-manager
     zip
-    zoxide
-    zsh
   ];
 }

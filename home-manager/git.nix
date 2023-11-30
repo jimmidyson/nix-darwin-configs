@@ -60,8 +60,6 @@
       init.defaultBranch = "main";
       rebase.autosquash = true;
       versionsort.suffix = "-";
-      credential."https://github.com".helper = "!/usr/bin/gh auth git-credential";
-      credential."https://gist.github.com".helper = "!/usr/bin/gh auth git-credential";
     };
   };
 }

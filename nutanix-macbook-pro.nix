@@ -27,6 +27,8 @@ in {
       imports = [
         home-manager/darwin.nix
         home-manager/git.nix
+        home-manager/programs.nix
+        home-manager/zsh.nix
       ];
     };
   };
