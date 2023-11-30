@@ -82,7 +82,7 @@
         ykman -d 20692469 openpgp keys set-touch enc cached -f
       }
 
-      export GITHUB_TOKEN = "$(gopass -n -o github/hub)";
+      export GITHUB_TOKEN="$(gopass -n -o github/hub)";
     '';
 
     oh-my-zsh = {
