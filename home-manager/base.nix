@@ -13,6 +13,7 @@ in {
   };
 
   home.packages = with pkgs; [
+    amazon-ecr-credential-helper
     bash
     bind
     coreutils
@@ -20,6 +21,7 @@ in {
     curl
     delta
     docker
+    docker-credential-helpers
     dos2unix
     fd
     file
@@ -32,6 +34,7 @@ in {
     gnused
     gojq
     gomuks
+    google-cloud-sdk
     gopass
     gvproxy
     htop
