@@ -83,6 +83,7 @@
       }
 
       export GITHUB_TOKEN="$(gopass -n -o github/hub)";
+      export KIND_EXPERIMENTAL_PROVIDER=podman
     '';
 
     oh-my-zsh = {
