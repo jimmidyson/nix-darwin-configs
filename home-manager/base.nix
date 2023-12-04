@@ -20,7 +20,7 @@ in {
     crane
     curl
     delta
-    # docker
+    docker
     docker-credential-helpers
     dos2unix
     fd
