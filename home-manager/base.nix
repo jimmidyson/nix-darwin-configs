@@ -20,6 +20,7 @@ in {
     crane
     curl
     delta
+    diceware
     docker
     docker-credential-helpers
     dos2unix

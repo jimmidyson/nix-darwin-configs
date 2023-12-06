@@ -84,7 +84,7 @@
 
       export GITHUB_TOKEN="$(gopass -n -o github/hub)";
       export KIND_EXPERIMENTAL_PROVIDER=podman
-      export DOCKER_HOST=unix://$(podman machine inspect | jq -r '.[0].ConnectionInfo.PodmanSocket.Path')
+      export DOCKER_HOST=unix://$(podman machine inspect | gojq -r '.[0].ConnectionInfo.PodmanSocket.Path')
     '';
 
     oh-my-zsh = {
