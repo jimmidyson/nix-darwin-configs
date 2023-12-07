@@ -82,9 +82,15 @@
         ykman -d 20692469 openpgp keys set-touch enc cached -f
       }
 
+      zstyle ':completion:*:make:*:targets' call-command true
+      zstyle ':completion:*:*:make:*' tag-order 'targets'
+
+
       export GITHUB_TOKEN="$(gopass -n -o github/hub)";
-      export KIND_EXPERIMENTAL_PROVIDER=podman
-      export DOCKER_HOST=unix://$(podman machine inspect | gojq -r '.[0].ConnectionInfo.PodmanSocket.Path')
+      export DO_NOT_TRACK="1";
+      export MCFLY_RESULTS_SORT="LAST_RUN";
+
+      export DOCKER_HOST="$(docker context inspect --format='{{.Endpoints.docker.Host}}' "$(docker context show)")"
     '';
 
     oh-my-zsh = {
@@ -158,11 +164,5 @@
         };
       }
     ];
-
-    sessionVariables = {
-      DO_NOT_TRACK = "1";
-      DOCKER_HOST = "unix:///Users/jimmi.dyson/.local/share/containers/podman/machine/podman.sock";
-      MCFLY_RESULTS_SORT = "LAST_RUN";
-    };
   };
 }
