@@ -3,7 +3,7 @@
 let
   homeDir = config.home.homeDirectory;
 in {
-  home.stateVersion = "23.05";
+  home.stateVersion = "23.11";
   home.enableNixpkgsReleaseCheck = false;
   nix = {
     package = pkgs.nix;
