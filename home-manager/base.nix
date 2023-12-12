@@ -30,6 +30,7 @@ in {
     fzf
     gcc
     gitleaks
+    gnugrep
     gnumake
     gnupg
     gnused
