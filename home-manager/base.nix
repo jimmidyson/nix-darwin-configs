@@ -28,11 +28,13 @@ in {
     file
     findutils
     fzf
+    gawk
     gcc
     gitleaks
     gnugrep
     gnumake
     gnupg
+    gnutar
     gnused
     gojq
     gomuks
