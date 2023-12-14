@@ -91,6 +91,8 @@
       export MCFLY_RESULTS_SORT="LAST_RUN";
 
       export DOCKER_HOST="$(docker context inspect --format='{{.Endpoints.docker.Host}}' "$(docker context show)")"
+
+      export EDITOR=vim
     '';
 
     oh-my-zsh = {
