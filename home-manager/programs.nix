@@ -3,6 +3,17 @@
   programs = {
     awscli = {
       enable = true;
+      credentials = {
+        "default" = {
+          "credential_process" = "/usr/local/bin/maws li -j";
+        };
+      };
+      settings = {
+        "default" = {
+          region = "us-west-2";
+          output = "json";
+        };
+      };
     };
 
     bat = {

@@ -8,6 +8,7 @@
     onActivation.upgrade = true;
     onActivation.cleanup = "zap";
     brews = [
+      "coreutils"
       "docker-mac-net-connect"
       "pinentry-mac"
       "skhd"
