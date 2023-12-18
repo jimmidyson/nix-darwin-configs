@@ -30,6 +30,7 @@
       "chipmk/tap"
     ];
     casks = [
+      "betterdisplay"
       "firefox"
       "font-droid-sans-mono-for-powerline"
       "font-fira-code"
