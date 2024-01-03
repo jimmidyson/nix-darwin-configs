@@ -90,9 +90,9 @@
       export DO_NOT_TRACK="1";
       export MCFLY_RESULTS_SORT="LAST_RUN";
 
-      export DOCKER_HOST="$(docker context inspect --format='{{.Endpoints.docker.Host}}' "$(docker context show)")"
-
       export EDITOR=vim
+
+      export DOCKER_HOST="$(docker context list --format json 2>/dev/null | gojq -r 'select(.Current).DockerEndpoint')"
     '';
 
     oh-my-zsh = {
