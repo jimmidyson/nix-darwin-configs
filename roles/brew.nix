@@ -21,10 +21,10 @@
       cask_args appdir: "~/Applications"
     '';
     taps = [
-      "homebrew/cask"
+      #"homebrew/cask"
       "homebrew/cask-fonts"
       "homebrew/cask-versions"
-      "homebrew/core"
+      #"homebrew/core"
       "homebrew/services"
       "koekeishiya/formulae"
       "chipmk/tap"
