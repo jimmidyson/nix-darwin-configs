@@ -86,7 +86,7 @@
       zstyle ':completion:*:*:make:*' tag-order 'targets'
 
 
-      export GITHUB_TOKEN="$(gopass -n -o github/hub)";
+      # export GITHUB_TOKEN="$(gopass -n -o github/hub)";
       export DO_NOT_TRACK="1";
       export MCFLY_RESULTS_SORT="LAST_RUN";
 

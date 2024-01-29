@@ -59,8 +59,8 @@
         sort = "-version:refname";
       };
       remote.origin.fetch = "+refs/pull/*/head:refs/remotes/origin/pr/*";
-      url."ssh://git@github.com/".insteadOf = "https://github.com/";
-      url."ssh://git@gist.github.com/".insteadOf = "https://gist.github.com/";
+      #url."ssh://git@github.com/".insteadOf = "https://github.com/";
+      #url."ssh://git@gist.github.com/".insteadOf = "https://gist.github.com/";
       init.defaultBranch = "main";
       rebase.autosquash = true;
       versionsort.suffix = "-";
