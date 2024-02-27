@@ -42,6 +42,10 @@
       enable = true;
     };
 
+    java = {
+      enable = true;
+    };
+
     k9s = {
       enable = true;
     };
