@@ -62,7 +62,10 @@
       #url."ssh://git@github.com/".insteadOf = "https://github.com/";
       #url."ssh://git@gist.github.com/".insteadOf = "https://gist.github.com/";
       init.defaultBranch = "main";
-      rebase.autosquash = true;
+      rebase = {
+        autosquash = true;
+        updateRefs = true;
+      };
       versionsort.suffix = "-";
     };
   };
