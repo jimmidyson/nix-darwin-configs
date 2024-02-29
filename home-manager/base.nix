@@ -16,6 +16,7 @@ in {
     amazon-ecr-credential-helper
     bash
     bind
+    cacert
     coreutils
     crane
     curl

@@ -50,8 +50,10 @@
 
     extraConfig = {
       core = {
-        editor = "vim";
         autocrlf = "input";
+        editor = "vim";
+        fsmonitor = true;
+        untrackedcache = true;
       };
       rerere.enabled = true;
       tag = {
