@@ -27,7 +27,7 @@
     eza = {
       enable = true;
       git = true;
-      enableAliases = true;
+      enableZshIntegration = true;
     };
 
     gh = {

@@ -59,7 +59,6 @@ in {
     python3
     qemu
     ripgrep
-    rnix-lsp
     srm
     starship
     tcpdump
