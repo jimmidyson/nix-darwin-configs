@@ -52,6 +52,7 @@ in {
     lima
     nixpkgs-fmt
     nmap
+    nodejs
     openssl
     pciutils
     podman
