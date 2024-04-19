@@ -55,7 +55,7 @@ in {
     nodejs
     openssl
     pciutils
-    podman
+    # podman
     pwgen
     python3
     qemu
