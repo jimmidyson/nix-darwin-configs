@@ -68,5 +68,13 @@ in {
     vale
     yubikey-manager
     zip
+    (wrapHelm kubernetes-helm {
+      plugins = with kubernetes-helmPlugins; [
+        helm-secrets
+        helm-diff
+        helm-s3
+        helm-git
+      ];
+    })
   ];
 }
