@@ -19,7 +19,7 @@ in {
   ];
 
   # add nerd fonts
-  fonts.fonts = with pkgs; [
+  fonts.packages = with pkgs; [
     (nerdfonts.override { fonts = [ "Hack" "DroidSansMono" "Iosevka" ]; })
   ];
 
