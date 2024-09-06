@@ -38,7 +38,6 @@ in {
     gnutar
     gnused
     gojq
-    gomuks
     google-cloud-sdk
     gopass
     gvproxy
