@@ -92,8 +92,6 @@
 
       export EDITOR=vim
 
-      export DOCKER_HOST="$(docker context list --format json 2>/dev/null | gojq -r 'select(.Current).DockerEndpoint')"
-
       export PASSWORD_STORE_DIR="''${HOME}"/.local/share/gopass/stores/root
     '';
 
