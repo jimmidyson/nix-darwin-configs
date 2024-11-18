@@ -6,12 +6,8 @@ in {
   #package config
   nixpkgs.config = {
     allowUnfree = true;
-    # permittedInsecurePackages = [
-    #  "olm-3.2.16"
-    # ]; 
   };
 
-  services.activate-system.enable = true;
   services.nix-daemon.enable = true;
   programs.nix-index.enable = true;
 

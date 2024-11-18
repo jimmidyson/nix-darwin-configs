@@ -62,7 +62,6 @@ in {
     ripgrep
     srm
     starship
-    step-ca
     step-cli
     tcpdump
     tree
