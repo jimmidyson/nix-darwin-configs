@@ -16,7 +16,6 @@ in {
     amazon-ecr-credential-helper
     bash
     bind
-    bruno
     cacert
     coreutils
     crane
