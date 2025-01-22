@@ -52,6 +52,11 @@
         kind create cluster --name "''${1:-kind}" --image ghcr.io/mesosphere/kind-node:''${1:-$(crane ls ghcr.io/mesosphere/kind-node | grep -v 64 | sort -rV | head -1)} --config - <<EOF
       kind: Cluster
       apiVersion: kind.x-k8s.io/v1alpha4
+      nodes:
+      - role: control-plane
+        extraMounts:
+        - hostPath: /var/run/docker.sock
+          containerPath: /var/run/docker.sock
       containerdConfigPatches:
       - |-
         [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
