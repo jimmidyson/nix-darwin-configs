@@ -5,13 +5,22 @@
       enable = true;
       credentials = {
         "default" = {
-          "credential_process" = "/usr/local/bin/maws li -j";
+          #"credential_process" = "/usr/local/bin/maws li -j";
+          "credential_process" = "gopass show -n aws-protoss";
         };
       };
       settings = {
         "default" = {
+          sso_session = "aws-protoss";
+          sso_account_id = "355186487480";
+          sso_role_name = "DeveloperAccess";
           region = "us-west-2";
           output = "json";
+        };
+        "sso-session aws-protoss" = {
+          sso_start_url = "https://d-9267030733.awsapps.com/start/#";
+          sso_region = "us-west-2";
+          sso_registration_scopes = "sso:account:access";
         };
       };
     };
