@@ -19,6 +19,8 @@
       cat = "bat --plain";
       jq = "gojq";
       kd = "kitty +kitten diff";
+
+      assume = "source \${HOME}/.nix-profile/bin/assume";
     };
 
     history = {

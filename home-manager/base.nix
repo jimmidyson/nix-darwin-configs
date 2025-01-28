@@ -14,6 +14,7 @@ in {
 
   home.packages = with pkgs; [
     amazon-ecr-credential-helper
+    aws-iam-authenticator
     bash
     bind
     cacert
@@ -40,6 +41,7 @@ in {
     gojq
     google-cloud-sdk
     gopass
+    granted
     gvproxy
     htop
     inetutils

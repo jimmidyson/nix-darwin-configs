@@ -3,12 +3,6 @@
   programs = {
     awscli = {
       enable = true;
-      credentials = {
-        "default" = {
-          #"credential_process" = "/usr/local/bin/maws li -j";
-          "credential_process" = "gopass show -n aws-protoss";
-        };
-      };
       settings = {
         "default" = {
           sso_session = "aws-protoss";
