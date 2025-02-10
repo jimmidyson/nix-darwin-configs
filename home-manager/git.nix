@@ -68,6 +68,12 @@
         updateRefs = true;
       };
       versionsort.suffix = "-";
+
+      url = {
+        "ssh://git@github.com/" = {
+          insteadOf = "https://github.com/";
+        };
+      };
     };
   };
 }
