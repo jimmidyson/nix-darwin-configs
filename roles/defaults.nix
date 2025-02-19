@@ -8,7 +8,6 @@ in {
     allowUnfree = true;
   };
 
-  services.nix-daemon.enable = true;
   programs.nix-index.enable = true;
 
   programs.zsh.enable = true;
