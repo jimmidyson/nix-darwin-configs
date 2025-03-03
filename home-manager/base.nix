@@ -1,4 +1,4 @@
-{ config, pkgs, home-manager, ... }:
+{ config, pkgs, home-manager, lib, ... }:
 
 let
   homeDir = config.home.homeDirectory;
@@ -6,7 +6,7 @@ in {
   home.stateVersion = "23.11";
   home.enableNixpkgsReleaseCheck = false;
   nix = {
-    package = pkgs.nix;
+    package = lib.mkForce pkgs.nix;
     extraOptions = ''
       experimental-features = nix-command flakes
     '';
@@ -66,6 +66,7 @@ in {
     step-cli
     tcpdump
     tree
+    trivy
     unzip
     vale
     yubikey-manager

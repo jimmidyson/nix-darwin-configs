@@ -1,4 +1,4 @@
-{ config, pkgs, home-manager, lib, ... }:
+{ config, pkgs, home-manager, ... }:
 
 let
   system = pkgs.system;
@@ -7,13 +7,6 @@ in {
   imports = [
     ./base.nix
   ];
-
-  nix = {
-    package = lib.mkForce pkgs.nix;
-    extraOptions = ''
-      experimental-features = nix-command flakes
-    '';
-  };
 
   home.packages = [
     pkgs.colima
