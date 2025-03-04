@@ -27,6 +27,7 @@ in {
     docker-credential-helpers
     dos2unix
     fd
+    ffmpeg-full
     file
     findutils
     fzf
@@ -65,6 +66,7 @@ in {
     starship
     step-cli
     tcpdump
+    time
     tree
     trivy
     unzip
