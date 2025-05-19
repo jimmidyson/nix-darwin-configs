@@ -28,7 +28,7 @@
       ignoreAllDups = true;
     };
 
-    initExtra = ''
+    initContent= ''
       stty start undef # disable C-s stopping receiving keyboard signals.
       stty stop undef
       setopt MENU_COMPLETE # select first menu option automatically
