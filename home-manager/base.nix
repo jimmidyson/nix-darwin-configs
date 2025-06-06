@@ -43,6 +43,7 @@ in {
     google-cloud-sdk
     gopass
     granted
+    graphviz
     gvproxy
     htop
     inetutils
