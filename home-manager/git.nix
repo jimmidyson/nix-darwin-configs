@@ -17,7 +17,8 @@
     ];
 
     signing = {
-      key = "E0F45E3A4407632B4BAB0B7F57F2DEC0CF861269";
+      format = "ssh";
+      key = "~/.ssh/id_ed25519.pub";
       signByDefault = true;
     };
 
