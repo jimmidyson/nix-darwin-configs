@@ -18,8 +18,9 @@
 
     signing = {
       format = "ssh";
-      key = "~/.ssh/id_ed25519.pub";
+      key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMNOtzmH4CEiLsg0zU45n7ytZz921zlJlrVWXOW0SV2E";
       signByDefault = true;
+      signer = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
     };
 
     delta = {

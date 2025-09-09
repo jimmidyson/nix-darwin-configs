@@ -1,5 +1,10 @@
 { pkgs, config, home-manager, ... }:
 {
+  home.sessionPath = [
+    "\${HOME}/.local/bin"
+    "\${HOME}/go/bin"
+  ];
+
   programs.zsh = {
     enable = true;
 
@@ -65,8 +70,8 @@
           endpoint = ["https://mirror.gcr.io"]
       - |-
         [plugins."io.containerd.grpc.v1.cri".registry.configs."registry-1.docker.io".auth]
-          username = "jimmidyson"
-          password = "$(gopass -n -o docker-credential-helpers/aHR0cHM6Ly9pbmRleC5kb2NrZXIuaW8vdjEv/jimmidyson)"
+          username = "$(gopass --nosync -n -o docker.io/username)"
+          password = "$(gopass --nosync -n -o docker.io/read-only-password)"
           auth = ""
           identitytoken = ""
       kubeadmConfigPatches:
@@ -77,21 +82,8 @@
       EOF
       }
 
-      yubikeytouchoff() {
-        ykman -d 20692469 openpgp keys set-touch sig off -f
-        ykman -d 20692469 openpgp keys set-touch aut off -f
-        ykman -d 20692469 openpgp keys set-touch enc off -f
-      }
-
-      yubikeytouchon() {
-        ykman -d 20692469 openpgp keys set-touch sig cached -f
-        ykman -d 20692469 openpgp keys set-touch aut cached -f
-        ykman -d 20692469 openpgp keys set-touch enc cached -f
-      }
-
       zstyle ':completion:*:make:*:targets' call-command true
       zstyle ':completion:*:*:make:*' tag-order 'targets'
-
 
       # export GITHUB_TOKEN="$(gopass -n -o github/hub)";
       export DO_NOT_TRACK="1";
