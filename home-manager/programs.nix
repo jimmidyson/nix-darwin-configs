@@ -40,6 +40,10 @@
       };
     };
 
+    gh-dash = {
+      enable = true;
+    };
+
     go = {
       enable = true;
     };

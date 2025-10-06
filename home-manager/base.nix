@@ -5,6 +5,7 @@ let
 in {
   home.stateVersion = "23.11";
   home.enableNixpkgsReleaseCheck = false;
+
   nix = {
     package = lib.mkForce pkgs.nix;
     extraOptions = ''
@@ -33,6 +34,7 @@ in {
     fzf
     gawk
     gcc
+    github-copilot-cli
     gitleaks
     gnugrep
     gnumake
