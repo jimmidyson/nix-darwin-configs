@@ -6,6 +6,7 @@ let
 in {
   imports = [
     ./base.nix
+    ./extra.nix
   ];
 
   home.packages = [
