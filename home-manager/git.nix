@@ -3,54 +3,20 @@
   home.packages = [ pkgs.git-lfs ];
 
   programs.git = {
-    package = pkgs.gitAndTools.gitFull;
+    package = pkgs.gitFull;
     enable = true;
-    userName = "Jimmi Dyson";
-    userEmail = "jimmidyson@gmail.com";
 
-    ignores = [
-      "*~"
-      "*.swp"
-      ".history/"
-      ".pythom-version/"
-      ".idea/"
-    ];
-
-    signing = {
-      format = "ssh";
-      key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMNOtzmH4CEiLsg0zU45n7ytZz921zlJlrVWXOW0SV2E";
-      signByDefault = true;
-      signer = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
-    };
-
-    delta = {
-      enable = true;
-      options = {
-        features = "decorations";
-        navigate = true;
-        light = false;
-        interactive = {
-          keep-plus-minus-markers = false;
-        };
-        decorations = {
-          commit-decoration-style = "bold yellow box ul";
-          file-decoration-style = "none";
-          file-style = "bold yellow ul";
-          hunk-header-decoration-style = "cyan box ul";
-        };
+    settings = {
+      user = {
+        name = "Jimmi Dyson";
+        email = "jimmidyson@gmail.com";
       };
-    };
 
-    lfs = {
-      enable = true;
-    };
+      aliases = {
+        gone = "! git fetch -p && git for-each-ref --format '%(refname:short) %(upstream:track)' | awk '$2 == \"[gone]\" {print $1}' | xargs -t -I{} git branch -D {}";
+        aliases = "config --get-regexp '^alias\\.'";
+      };
 
-    aliases = {
-      gone = "! git fetch -p && git for-each-ref --format '%(refname:short) %(upstream:track)' | awk '$2 == \"[gone]\" {print $1}' | xargs -t -I{} git branch -D {}";
-      aliases = "config --get-regexp '^alias\\.'";
-    };
-
-    extraConfig = {
       core = {
         autocrlf = "input";
         editor = "vim";
@@ -75,6 +41,46 @@
         "ssh://git@github.com/" = {
           insteadOf = "https://github.com/";
         };
+      };
+    };
+
+    ignores = [
+      "*~"
+      "*.swp"
+      ".history/"
+      ".pythom-version/"
+      ".idea/"
+    ];
+
+    signing = {
+      format = "ssh";
+      key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMNOtzmH4CEiLsg0zU45n7ytZz921zlJlrVWXOW0SV2E";
+      signByDefault = true;
+      signer = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
+    };
+
+    lfs = {
+      enable = true;
+    };
+  };
+
+  programs.delta = {
+    enable = true;
+
+    enableGitIntegration = true;
+
+    options = {
+      features = "decorations";
+      navigate = true;
+      light = false;
+      interactive = {
+        keep-plus-minus-markers = false;
+      };
+      decorations = {
+        commit-decoration-style = "bold yellow box ul";
+        file-decoration-style = "none";
+        file-style = "bold yellow ul";
+        hunk-header-decoration-style = "cyan box ul";
       };
     };
   };
