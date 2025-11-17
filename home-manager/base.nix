@@ -8,9 +8,10 @@ in {
 
   nix = {
     package = lib.mkForce pkgs.nix;
-    extraOptions = ''
-      experimental-features = nix-command flakes
-    '';
+    settings = {
+      download-buffer-size = 500000000;
+      experimental-features = "nix-command flakes";
+    }; 
   };
 
   home.packages = with pkgs; [
