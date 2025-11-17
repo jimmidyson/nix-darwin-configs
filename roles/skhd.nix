@@ -7,7 +7,8 @@ in {
   services.skhd.package =  pkgs.skhd;
   services.skhd.skhdConfig = ''
     # open terminal
-    cmd - return : /run/current-system/sw/bin/kitty --single-instance -d ~ &> /dev/null
+    # cmd - return : /run/current-system/sw/bin/kitty --single-instance -d ~ &> /dev/null
+    cmd - return : /usr/local/bin/warp
     
     # open mpv with url from clipboard
     shift + cmd - m : mpv $(pbpaste)
