@@ -9,6 +9,7 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-auth.url = "github:numtide/nix-auth";
   };
 
   outputs = inputs@{ self,
@@ -16,6 +17,7 @@
                      darwin,
                      home-manager,
                      flake-utils,
+                     nix-auth,
                      ... }:
   flake-utils.lib.eachDefaultSystem (system: let
     pkgs = import nixpkgs {

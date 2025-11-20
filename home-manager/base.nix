@@ -9,9 +9,11 @@ in {
   nix = {
     package = lib.mkForce pkgs.nix;
     settings = {
-      download-buffer-size = 500000000;
       experimental-features = "nix-command flakes";
-    }; 
+    };
+    extraOptions = ''
+      !include access-tokens.conf
+    '';
   };
 
   home.packages = with pkgs; [

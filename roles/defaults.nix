@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, nix-auth,... }:
 
 let
   system = pkgs.system;
@@ -16,6 +16,7 @@ in {
     pkgs.git
     pkgs.kitty
     pkgs.vim
+    nix-auth.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 
   # add nerd fonts
