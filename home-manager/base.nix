@@ -74,6 +74,7 @@ in {
     tcpdump
     time
     tree
+    trilium-desktop
     trivy
     unzip
     vale
@@ -81,10 +82,13 @@ in {
     zip
     (wrapHelm kubernetes-helm {
       plugins = with kubernetes-helmPlugins; [
-        helm-secrets
         helm-diff
-        helm-s3
+        helm-dt
         helm-git
+        helm-mapkubeapis
+        helm-schema
+        helm-secrets
+        helm-s3
       ];
     })
   ];

@@ -37,7 +37,7 @@
       "font-iosevka-nerd-font"
       "iterm2"
       "notunes"
-      "tailscale"
+      "tailscale-app"
     ];
   };
 }
