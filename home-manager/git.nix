@@ -12,7 +12,7 @@
         email = "jimmidyson@gmail.com";
       };
 
-      aliases = {
+      alias = {
         gone = "! git fetch -p && git for-each-ref --format '%(refname:short) %(upstream:track)' | awk '$2 == \"[gone]\" {print $1}' | xargs -t -I{} git branch -D {}";
         aliases = "config --get-regexp '^alias\\.'";
       };
