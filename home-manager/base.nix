@@ -37,6 +37,7 @@ in {
     fzf
     gawk
     gcc
+    get_iplayer
     github-copilot-cli
     gitleaks
     gnugrep
@@ -77,8 +78,8 @@ in {
     trilium-desktop
     trivy
     unzip
+    uv
     vale
-    yubikey-manager
     zip
     (wrapHelm kubernetes-helm {
       plugins = with kubernetes-helmPlugins; [
