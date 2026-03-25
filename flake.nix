@@ -10,6 +10,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-auth.url = "github:numtide/nix-auth";
+    tuicr.url = "github:agavra/tuicr?ref=v0.9.0";
   };
 
   outputs = inputs@{ self,
@@ -18,6 +19,7 @@
                      home-manager,
                      flake-utils,
                      nix-auth,
+                     tuicr,
                      ... }:
   flake-utils.lib.eachDefaultSystem (system: let
     pkgs = import nixpkgs {

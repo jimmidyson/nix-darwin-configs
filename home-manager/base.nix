@@ -1,4 +1,4 @@
-{ config, pkgs, home-manager, lib, ... }:
+{ config, pkgs, home-manager, tuicr, lib, ... }:
 
 let
   homeDir = config.home.homeDirectory;
@@ -16,7 +16,9 @@ in {
     '';
   };
 
-  home.packages = with pkgs; [
+  home.packages = [
+    tuicr.defaultPackage.${pkgs.stdenv.hostPlatform.system}
+  ] ++ (with pkgs; [
     amazon-ecr-credential-helper
     aws-iam-authenticator
     bash
@@ -68,6 +70,7 @@ in {
     pwgen
     python3
     qemu
+    repomix
     ripgrep
     srm
     starship
@@ -92,5 +95,5 @@ in {
         helm-s3
       ];
     })
-  ];
+  ]);
 }
