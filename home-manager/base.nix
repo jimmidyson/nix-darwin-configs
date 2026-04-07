@@ -1,4 +1,4 @@
-{ config, pkgs, home-manager, tuicr, lib, ... }:
+{ config, pkgs, home-manager, tuicr, lib, troubleshoot-live, ... }:
 
 let
   homeDir = config.home.homeDirectory;
@@ -18,6 +18,7 @@ in {
 
   home.packages = [
     tuicr.defaultPackage.${pkgs.stdenv.hostPlatform.system}
+    troubleshoot-live.packages.${pkgs.stdenv.hostPlatform.system}.default
   ] ++ (with pkgs; [
     amazon-ecr-credential-helper
     aws-iam-authenticator

@@ -11,6 +11,7 @@
     };
     nix-auth.url = "github:numtide/nix-auth";
     tuicr.url = "github:agavra/tuicr?ref=v0.9.0";
+    troubleshoot-live.url = "github:mhrabovcin/troubleshoot-live";
   };
 
   outputs = inputs@{ self,
@@ -20,6 +21,7 @@
                      flake-utils,
                      nix-auth,
                      tuicr,
+                     troubleshoot-live,
                      ... }:
   flake-utils.lib.eachDefaultSystem (system: let
     pkgs = import nixpkgs {

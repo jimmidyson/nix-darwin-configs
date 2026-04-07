@@ -1,4 +1,4 @@
-{ config, pkgs, home-manager, tuicr, ... }:
+{ config, pkgs, home-manager, tuicr, troubleshoot-live, ... }:
 
 {
   imports = [
@@ -6,5 +6,5 @@
   ];
   home-manager.useGlobalPkgs = true;
   home-manager.backupFileExtension = "backup";
-  home-manager.extraSpecialArgs = { inherit tuicr; };
+  home-manager.extraSpecialArgs = { inherit tuicr troubleshoot-live; };
 }
