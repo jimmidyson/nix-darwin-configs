@@ -3,6 +3,7 @@
   home.sessionPath = [
     "\${HOME}/.local/bin"
     "\${HOME}/go/bin"
+    "\${HOME}/.npm-packages/bin"
   ];
 
   programs.zsh = {

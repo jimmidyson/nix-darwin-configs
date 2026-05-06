@@ -3,7 +3,7 @@
 let
   homeDir = config.home.homeDirectory;
 in {
-  home.stateVersion = "23.11";
+  home.stateVersion = "25.11";
   home.enableNixpkgsReleaseCheck = false;
 
   nix = {
@@ -24,6 +24,7 @@ in {
     aws-iam-authenticator
     bash
     bind
+    bun
     cacert
     coreutils
     crane

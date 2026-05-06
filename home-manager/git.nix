@@ -52,12 +52,22 @@
       ".idea/"
     ];
 
-    signing = {
-      format = "ssh";
-      key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMNOtzmH4CEiLsg0zU45n7ytZz921zlJlrVWXOW0SV2E";
-      signByDefault = true;
-      signer = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
-    };
+    includes = [
+      {
+        condition = "hasconfig:remote.*.url:git@github.com:*/**";
+        contents = {
+          core = {
+            sshCommand = "ssh -i ~/.ssh/id_github_personal.pub -o IdentitiesOnly=yes";
+          };
+          signing = {
+            format = "ssh";
+            key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMNOtzmH4CEiLsg0zU45n7ytZz921zlJlrVWXOW0SV2E";
+            signByDefault = true;
+            signer = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
+          };
+        };
+      }
+    ];
 
     lfs = {
       enable = true;
