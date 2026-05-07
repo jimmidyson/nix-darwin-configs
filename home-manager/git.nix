@@ -42,6 +42,11 @@
           insteadOf = "https://github.com/";
         };
       };
+
+      signing = {
+        format = "ssh";
+        signByDefault = true;
+      };
     };
 
     ignores = [
@@ -60,9 +65,19 @@
             sshCommand = "ssh -i ~/.ssh/id_github_personal.pub -o IdentitiesOnly=yes";
           };
           signing = {
-            format = "ssh";
             key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMNOtzmH4CEiLsg0zU45n7ytZz921zlJlrVWXOW0SV2E";
-            signByDefault = true;
+            signer = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
+          };
+        };
+      }
+      {
+        condition = "hasconfig:remote.*.url:git@github.com:nutanix-ncn/**";
+        contents = {
+          core = {
+            sshCommand = "ssh -i ~/.ssh/id_github_emu.pub -o IdentitiesOnly=yes";
+          };
+          signing = {
+            key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPubUu24yDLddpTzZTN4Cg8Z2Bix6khiWrBNtYkUDs3Y";
             signer = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
           };
         };
