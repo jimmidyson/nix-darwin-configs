@@ -1,4 +1,4 @@
-{ pkgs, config, home-manager, ... }:
+{ pkgs, config, home-manager, lib, ... }:
 {
   home.packages = [ pkgs.git-lfs ];
 
@@ -42,11 +42,12 @@
           insteadOf = "https://github.com/";
         };
       };
+    };
 
-      signing = {
-        format = "ssh";
-        signByDefault = true;
-      };
+    signing = {
+      format = "ssh";
+      signByDefault = true;
+      signer = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
     };
 
     ignores = [
@@ -64,9 +65,8 @@
           core = {
             sshCommand = "ssh -i ~/.ssh/id_github_personal.pub -o IdentitiesOnly=yes";
           };
-          signing = {
-            key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMNOtzmH4CEiLsg0zU45n7ytZz921zlJlrVWXOW0SV2E";
-            signer = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
+          user = {
+            signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMNOtzmH4CEiLsg0zU45n7ytZz921zlJlrVWXOW0SV2E";
           };
         };
       }
@@ -76,9 +76,8 @@
           core = {
             sshCommand = "ssh -i ~/.ssh/id_github_emu.pub -o IdentitiesOnly=yes";
           };
-          signing = {
-            key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPubUu24yDLddpTzZTN4Cg8Z2Bix6khiWrBNtYkUDs3Y";
-            signer = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
+          user = {
+            signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPubUu24yDLddpTzZTN4Cg8Z2Bix6khiWrBNtYkUDs3Y";
           };
         };
       }

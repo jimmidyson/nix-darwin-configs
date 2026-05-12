@@ -20,6 +20,8 @@ in {
     tuicr.defaultPackage.${pkgs.stdenv.hostPlatform.system}
     troubleshoot-live.packages.${pkgs.stdenv.hostPlatform.system}.default
   ] ++ (with pkgs; [
+    _1password-cli
+    _1password-gui
     amazon-ecr-credential-helper
     aws-iam-authenticator
     bash
