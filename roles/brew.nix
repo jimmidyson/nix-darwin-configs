@@ -11,7 +11,6 @@
       "coreutils"
       "docker-mac-net-connect"
       "pinentry-mac"
-      "rtk"
       "skhd"
       "watch"
       "zsh-autosuggestions"
