@@ -36,12 +36,6 @@
         updateRefs = true;
       };
       versionsort.suffix = "-";
-
-      url = {
-        "ssh://git@github.com/" = {
-          insteadOf = "https://github.com/";
-        };
-      };
     };
 
     signing = {
@@ -62,8 +56,13 @@
       {
         condition = "hasconfig:remote.*.url:git@github.com:*/**";
         contents = {
-          core = {
-            sshCommand = "ssh -i ~/.ssh/id_github_personal.pub -o IdentitiesOnly=yes";
+          url = {
+            "git@personalgit:" = {
+              insteadOf = [
+                "https://github.com/"
+                "git@github.com:"
+              ];
+            };
           };
           user = {
             signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMNOtzmH4CEiLsg0zU45n7ytZz921zlJlrVWXOW0SV2E";
@@ -71,13 +70,18 @@
         };
       }
       {
-        condition = "hasconfig:remote.*.url:git@github.com:nutanix-ncn/**";
+        condition = "hasconfig:remote.*.url:https://github.com/**/**";
         contents = {
-          core = {
-            sshCommand = "ssh -i ~/.ssh/id_github_emu.pub -o IdentitiesOnly=yes";
+          url = {
+            "git@personalgit:" = {
+              insteadOf = [
+                "https://github.com/"
+                "git@github.com:"
+              ];
+            };
           };
           user = {
-            signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPubUu24yDLddpTzZTN4Cg8Z2Bix6khiWrBNtYkUDs3Y";
+            signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMNOtzmH4CEiLsg0zU45n7ytZz921zlJlrVWXOW0SV2E";
           };
         };
       }

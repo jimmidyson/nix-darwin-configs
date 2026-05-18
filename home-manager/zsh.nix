@@ -34,6 +34,10 @@
       ignoreAllDups = true;
     };
 
+    envExtra = ''
+      export SSH_AUTH_SOCK="''${HOME}"/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
+    '';
+
     initContent= ''
       stty start undef # disable C-s stopping receiving keyboard signals.
       stty stop undef
@@ -93,8 +97,6 @@
       export EDITOR=vim
 
       export PASSWORD_STORE_DIR="''${HOME}"/.local/share/gopass/stores/root
-
-      export SSH_AUTH_SOCK="''${HOME}"/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
     '';
 
     oh-my-zsh = {
