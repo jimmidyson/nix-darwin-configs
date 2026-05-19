@@ -11,7 +11,7 @@ in {
     cmd - return : /usr/local/bin/warp
     
     # open mpv with url from clipboard
-    shift + cmd - m : mpv $(pbpaste)
+    # shift + cmd - m : mpv $(pbpaste)
     
     # focus window
     ctrl - x : yabai -m window --focus recent
