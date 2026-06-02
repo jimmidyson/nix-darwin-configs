@@ -37,5 +37,10 @@
         ];
       };
     };
+
+    # Locally packaged tools not (yet) in nixpkgs. Also consumed by
+    # home-manager via home-manager/base.nix.
+    packages.backport = pkgs.callPackage ./pkgs/backport.nix { };
+    packages.troubleshoot-live = pkgs.callPackage ./pkgs/troubleshoot-live.nix { };
   });
 }

@@ -23,6 +23,7 @@ in {
     _1password-gui
     amazon-ecr-credential-helper
     aws-iam-authenticator
+    (callPackage ../pkgs/backport.nix { })
     bash
     bind
     bun
@@ -82,6 +83,7 @@ in {
     time
     tree
     trilium-desktop
+    (callPackage ../pkgs/troubleshoot-live.nix { })
     trivy
     unzip
     uv
