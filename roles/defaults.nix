@@ -53,4 +53,22 @@ in {
   nix.extraOptions = ''
     experimental-features = nix-command flakes
   '';
+
+  # 1. Inject the Umbrella certificate alongside standard internet certs
+  security.pki.certificateFiles = [
+    "/etc/nix/certs/Cisco_Secure_Access_Root_CA.cer"
+  ];
+
+  # 2. Force Nix-managed tools (curl, openssl, python, etc.) to use the combined bundle
+  environment.variables = {
+    NIX_SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
+    SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
+    REQUEST_CA_BUNDLE = "/etc/ssl/certs/ca-certificates.crt";
+    NODE_EXTRA_CA_CERTS = "/etc/ssl/certs/ca-certificates.crt";
+  };
+  nix.envVars = {
+    SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
+    NIX_SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
+    NODE_EXTRA_CA_CERTS = "/etc/ssl/certs/ca-certificates.crt";
+  };
 }

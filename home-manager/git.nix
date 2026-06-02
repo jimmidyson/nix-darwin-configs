@@ -10,6 +10,7 @@
       user = {
         name = "Jimmi Dyson";
         email = "jimmidyson@gmail.com";
+        signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMNOtzmH4CEiLsg0zU45n7ytZz921zlJlrVWXOW0SV2E";
       };
 
       alias = {
