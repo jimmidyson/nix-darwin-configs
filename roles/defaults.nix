@@ -71,4 +71,12 @@ in {
     NIX_SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
     NODE_EXTRA_CA_CERTS = "/etc/ssl/certs/ca-certificates.crt";
   };
+
+  # 3. Belt-and-suspenders: also set the daemon-side Nix setting in
+  #    /etc/nix/nix.conf, so fixed-output fetches (fetchFromGitHub, buildGoModule
+  #    vendoring, flake inputs) trust the combined bundle even if the daemon's
+  #    launchd environment is stale. nix-daemon reads this at startup, so it only
+  #    takes effect after the daemon restarts (darwin-rebuild switch restarts it
+  #    on a nix.conf change).
+  nix.settings.ssl-cert-file = "/etc/ssl/certs/ca-certificates.crt";
 }
