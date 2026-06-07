@@ -55,6 +55,38 @@
 
     includes = [
       {
+        condition = "hasconfig:remote.*.url:git@github.com:nutanix-ncn/**";
+        contents = {
+          url = {
+            "git@workgit:" = {
+              insteadOf = [
+                "https://github.com/"
+                "git@github.com:"
+              ];
+            };
+          };
+          user = {
+            signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPubUu24yDLddpTzZTN4Cg8Z2Bix6khiWrBNtYkUDs3Y";
+          };
+        };
+      }
+      {
+        condition = "hasconfig:remote.*.url:https://github.com/nutanix-ncn/**";
+        contents = {
+          url = {
+            "git@workgit:" = {
+              insteadOf = [
+                "https://github.com/"
+                "git@github.com:"
+              ];
+            };
+          };
+          user = {
+            signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPubUu24yDLddpTzZTN4Cg8Z2Bix6khiWrBNtYkUDs3Y";
+          };
+        };
+      }
+      {
         condition = "hasconfig:remote.*.url:git@github.com:*/**";
         contents = {
           url = {

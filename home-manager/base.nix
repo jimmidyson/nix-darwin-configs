@@ -61,6 +61,21 @@ in {
     inetutils
     kind
     kubectl
+    kubectl-ai
+    kubectl-convert
+    kubectl-df-pv
+    kubectl-doctor
+    kubectl-evict-pod
+    kubectl-explore
+    kubectl-gadget
+    kubectl-images
+    kubectl-klock
+    kubectl-ktop
+    kubectl-neat
+    kubectl-tree
+    kubectl-validate
+    kubectl-view-allocations
+    kubectl-view-secret
     lefthook
     libarchive
     libvirt
@@ -71,6 +86,7 @@ in {
     openssl
     pciutils
     # podman
+    prek
     pwgen
     python3
     qemu

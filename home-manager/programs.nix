@@ -38,6 +38,28 @@
       settings = {
         git_protocol = "ssh";
       };
+      extensions = [
+        pkgs.gh-enhance
+        pkgs.gh-f
+
+        (pkgs.stdenv.mkDerivation {
+          pname = "gh-context";
+          version = "latest";
+
+          src = pkgs.fetchFromGitHub {
+            owner = "automationpi";
+            repo = "gh-context";
+            rev = "main";
+            hash = "sha256-97srG/x7xkS9/dgf0w+o1TKJk8wdeHCrPe4+1QU9K1M=";
+          };
+
+          installPhase = ''
+            mkdir -p $out/bin
+            cp gh-context $out/bin/
+            chmod +x $out/bin/gh-context
+          '';
+        })
+      ];
     };
 
     gh-dash = {

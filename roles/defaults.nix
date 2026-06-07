@@ -58,6 +58,9 @@ in {
   security.pki.certificateFiles = [
     "/etc/nix/certs/Cisco_Secure_Access_Root_CA.cer"
   ];
+  nix.settings.extra-sandbox-paths = [
+    "/etc/nix/certs/Cisco_Secure_Access_Root_CA.cer"
+  ];
 
   # 2. Force Nix-managed tools (curl, openssl, python, etc.) to use the combined bundle
   environment.variables = {
