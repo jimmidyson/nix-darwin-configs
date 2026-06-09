@@ -4,6 +4,7 @@
     "\${HOME}/.local/bin"
     "\${HOME}/go/bin"
     "\${HOME}/.npm-packages/bin"
+    "/opt/homebrew/bin"
   ];
 
   programs.zsh = {
@@ -105,6 +106,7 @@
         "aliases"
         "archlinux"
         "aws"
+        "brew"
         "colored-man-pages"
         "colorize"
         "command-not-found"

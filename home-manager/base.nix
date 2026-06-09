@@ -79,7 +79,7 @@ in {
     lefthook
     libarchive
     libvirt
-    lima
+    # lima
     nixpkgs-fmt
     nmap
     nodejs

@@ -9,7 +9,6 @@ in {
   ];
 
   home.packages = [
-    pkgs.colima
     pkgs.m-cli
     pkgs.pinentry_mac
   ];

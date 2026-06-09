@@ -10,8 +10,6 @@ in {
 
   programs.nix-index.enable = true;
 
-  programs.zsh.enable = true;
-
   environment.systemPackages = [
     pkgs.git
     pkgs.kitty

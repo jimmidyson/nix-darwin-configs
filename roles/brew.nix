@@ -4,12 +4,14 @@
   #homebrew packages
   homebrew = {
     enable = true;
+    enableZshIntegration = true;
     onActivation.autoUpdate = true;
     onActivation.upgrade = true;
     onActivation.cleanup = "zap";
     brews = [
       "coreutils"
-      "docker-mac-net-connect"
+      #"docker-mac-net-connect"
+      "lima"
       "pinentry-mac"
       "skhd"
       "watch"
