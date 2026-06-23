@@ -10,7 +10,7 @@ in {
     roles/defaults.nix
     roles/brew.nix
     roles/yabai.nix
-    roles/skhd.nix
+    #roles/skhd.nix
     home-manager/settings.nix
   ];
 

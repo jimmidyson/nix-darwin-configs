@@ -41,6 +41,7 @@ in {
     file
     findutils
     fzf
+    fzf-git-sh
     gawk
     gcc
     get_iplayer

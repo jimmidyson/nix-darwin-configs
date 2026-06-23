@@ -13,7 +13,7 @@
       #"docker-mac-net-connect"
       "lima"
       "pinentry-mac"
-      "skhd"
+      "socket_vmnet"
       "watch"
       "zsh-autosuggestions"
       "zsh-fast-syntax-highlighting"
@@ -25,8 +25,8 @@
     taps = [
       #"homebrew/cask"
       #"homebrew/core"
-      "koekeishiya/formulae"
-      "chipmk/tap"
+      "jackielii/tap"
+      # "chipmk/tap"
     ];
     casks = [
       "betterdisplay"
@@ -36,6 +36,7 @@
       "font-iosevka-nerd-font"
       "iterm2"
       "notunes"
+      "skhd-zig"
       "tailscale-app"
     ];
   };

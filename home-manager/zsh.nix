@@ -98,6 +98,8 @@
       export EDITOR=vim
 
       export PASSWORD_STORE_DIR="''${HOME}"/.local/share/gopass/stores/root
+
+      source ${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh
     '';
 
     oh-my-zsh = {
