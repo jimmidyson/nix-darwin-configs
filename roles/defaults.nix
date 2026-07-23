@@ -4,8 +4,35 @@ let
   system = pkgs.system;
 in {
   #package config
-  nixpkgs.config = {
-    allowUnfree = true;
+  nixpkgs = {
+    config = {
+      allowUnfree = true;
+    };
+
+    overlays = [
+      (_final: prev: {
+        fzf-git-sh = prev.fzf-git-sh.overrideAttrs (oldAttrs: {
+          postPatch = (oldAttrs.postPatch or "") + ''
+            substituteInPlace fzf-git.sh \
+              --replace-fail '${prev.fzf}/bin/fzf-git-' 'fzf-git-'
+          '';
+
+          installCheckPhase = (oldAttrs.installCheckPhase or "") + ''
+            ${prev.gnugrep}/bin/grep -Fq '${prev.fzf}/bin/fzf --height' \
+              "$out/share/fzf-git-sh/fzf-git.sh"
+            if ${prev.gnugrep}/bin/grep -Fq '${prev.fzf}/bin/fzf-git-' \
+              "$out/share/fzf-git-sh/fzf-git.sh"; then
+              echo "fzf-git widget identifiers contain the fzf store path" >&2
+              exit 1
+            fi
+            ${prev.zsh}/bin/zsh -dfi -c '
+              source "$out/share/fzf-git-sh/fzf-git.sh"
+              typeset -f fzf-git-files-widget >/dev/null
+            '
+          '';
+        });
+      })
+    ];
   };
 
   programs.nix-index.enable = true;
@@ -48,8 +75,12 @@ in {
     SoftwareUpdate.AutomaticallyInstallMacOSUpdates = true;
   };
    # Add flake support
+  nix.settings = {
+    experimental-features = "nix-command flakes";
+  };
   nix.extraOptions = ''
-    experimental-features = nix-command flakes
+    min-free = ${toString (10 * 1024 * 1024 * 1024)} # 10 GB
+    max-free = ${toString (50 * 1024 * 1024 * 1024)} # 50 GB
   '';
 
   # 1. Inject the Umbrella certificate alongside standard internet certs
@@ -80,4 +111,15 @@ in {
   #    takes effect after the daemon restarts (darwin-rebuild switch restarts it
   #    on a nix.conf change).
   nix.settings.ssl-cert-file = "/etc/ssl/certs/ca-certificates.crt";
+
+  nix.optimise = {
+    automatic = true;
+    interval = { Hour = 12; Minute = 30; }; # Runs every day at 12:30 PM
+  };
+
+  nix.gc = {
+    automatic = true;
+    interval = { Hour = 3; Minute = 0; }; # Run every day at 3:00 AM
+    options = "--delete-older-than 7d";   # Automatically purges older generations
+  };
 }

@@ -25,6 +25,12 @@
 
     direnv = {
       enable = true;
+      nix-direnv.enable = true;
+      stdlib = ''
+        if command -v angrr >/dev/null 2>&1; then
+          angrr touch . 2>/dev/null || true
+        fi
+      '';
     };
 
     eza = {

@@ -3,7 +3,7 @@
 let
   homeDir = config.home.homeDirectory;
 in {
-  home.stateVersion = "25.11";
+  home.stateVersion = "26.05";
   home.enableNixpkgsReleaseCheck = false;
 
   nix = {
@@ -16,12 +16,32 @@ in {
     '';
   };
 
+  xdg.enable = true;
+  xdg.configFile."angrr/config.toml".text = ''
+    [temporary-root-policies.direnv]
+    path-regex = '/\.direnv/'
+    period = '14d'
+
+    [temporary-root-policies.devbox]
+    path-regex = '/\.devbox/'
+    period = '14d'
+
+    [temporary-root-policies.result]
+    path-regex = '/result[^/]*$'
+    period = '3d'
+
+    [profile-policies.system]
+    profile-paths = [ "/nix/var/nix/profiles/system" ]
+    keep-latest-n = 5
+  '';
+
   home.packages = [
     tuicr.defaultPackage.${pkgs.stdenv.hostPlatform.system}
   ] ++ (with pkgs; [
     _1password-cli
     _1password-gui
     amazon-ecr-credential-helper
+    angrr
     aws-iam-authenticator
     (callPackage ../pkgs/backport.nix { })
     bash
@@ -37,7 +57,7 @@ in {
     docker-credential-helpers
     dos2unix
     fd
-    ffmpeg-full
+    ffmpeg-headless
     file
     findutils
     fzf

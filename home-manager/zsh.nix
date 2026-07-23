@@ -10,6 +10,8 @@
   programs.zsh = {
     enable = true;
 
+    dotDir = "${config.xdg.configHome}/zsh";
+
     shellAliases = {
       ghprco = "gh pr checkout";
       ghprls = "gh pr list";
@@ -28,6 +30,9 @@
       kd = "kitty +kitten diff";
 
       assume = "source \${HOME}/.nix-profile/bin/assume";
+
+      nix-clean-system = "sudo /run/current-system/sw/bin/nix-env -p /nix/var/nix/profiles/system --delete-generations +5 && nix-collect-garbage";
+      nix-purge = "angrr && sudo nix-env -p /nix/var/nix/profiles/system --delete-generations +5 && sudo nix-collect-garbage -d";
     };
 
     history = {
