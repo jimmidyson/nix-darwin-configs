@@ -113,6 +113,7 @@ in {
     qemu
     repomix
     ripgrep
+    rtk
     srm
     starship
     step-cli

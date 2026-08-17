@@ -72,6 +72,12 @@
       enable = true;
     };
 
+    ghostty = {
+      enable = true;
+      package = pkgs.ghostty-bin;
+      enableZshIntegration = true;
+    };
+
     go = {
       enable = true;
     };

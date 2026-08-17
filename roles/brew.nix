@@ -12,6 +12,8 @@
       "coreutils"
       #"docker-mac-net-connect"
       "lima"
+      "modify-secret"
+      "moltis"
       "pinentry-mac"
       "socket_vmnet"
       "watch"
@@ -25,7 +27,18 @@
     taps = [
       #"homebrew/cask"
       #"homebrew/core"
-      "jackielii/tap"
+      {
+        name = "jackielii/tap";
+        trusted = true;
+      }
+      {
+        name = "moltis-org/tap";
+        trusted = true;
+      }
+      {
+        name = "rajatjindal/tap";
+        trusted = true;
+      }
       # "chipmk/tap"
     ];
     casks = [
