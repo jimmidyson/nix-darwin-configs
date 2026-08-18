@@ -13,7 +13,7 @@
       #"docker-mac-net-connect"
       "lima"
       "modify-secret"
-      "moltis"
+      "opencode"
       "pinentry-mac"
       "socket_vmnet"
       "watch"
@@ -39,6 +39,10 @@
         name = "rajatjindal/tap";
         trusted = true;
       }
+      {
+        name = "anomalyco/tap";
+        trusted = true;
+      }
       # "chipmk/tap"
     ];
     casks = [
@@ -49,6 +53,7 @@
       "font-iosevka-nerd-font"
       "iterm2"
       "notunes"
+      "opencode-desktop"
       "skhd-zig"
       "tailscale-app"
     ];
