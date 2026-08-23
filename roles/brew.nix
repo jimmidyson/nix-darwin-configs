@@ -32,10 +32,6 @@
         trusted = true;
       }
       {
-        name = "moltis-org/tap";
-        trusted = true;
-      }
-      {
         name = "rajatjindal/tap";
         trusted = true;
       }

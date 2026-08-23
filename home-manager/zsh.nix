@@ -105,6 +105,8 @@
       export PASSWORD_STORE_DIR="''${HOME}"/.local/share/gopass/stores/root
 
       source ${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh
+
+      eval "$(fnm env --use-on-cd --shell zsh)"
     '';
 
     oh-my-zsh = {

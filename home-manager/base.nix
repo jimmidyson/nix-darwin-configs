@@ -60,6 +60,7 @@ in {
     ffmpeg-headless
     file
     findutils
+    fnm
     fzf
     fzf-git-sh
     gawk
@@ -78,6 +79,7 @@ in {
     granted
     graphviz
     gvproxy
+    headlamp-server
     htop
     inetutils
     kind
