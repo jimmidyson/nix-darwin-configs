@@ -17,10 +17,11 @@ in {
   };
 
   home.packages = [
-    # Built from source via naersk, so every crate comes from crates.io. The
-    # Rocky box's corporate egress blocks crates.io outright, so this stays
-    # darwin-only until that is allowlisted; moving it back to base.nix is the
-    # only change needed then, since linux.nix already receives `tuicr` too.
+    # Built from source via naersk, so every crate comes from crates.io, and
+    # nothing has ever cached it. crates.io's own CDN answers 403 to the Rocky
+    # box, so it cannot build there; this stays darwin-only until that is
+    # resolved. Moving it back to base.nix is the only change needed then,
+    # since linux.nix already receives `tuicr` too.
     tuicr.defaultPackage.${pkgs.stdenv.hostPlatform.system}
   ] ++ (with pkgs; [
     m-cli

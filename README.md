@@ -131,30 +131,36 @@ their sources itself.
 
 | Package | Fetches from | Status on the Rocky box |
 | --- | --- | --- |
-| `tuicr` (flake input, naersk) | `crates.io` / `static.crates.io` | **blocked** — darwin-only, see `home-manager/darwin.nix` |
+| `tuicr` (flake input, naersk) | `crates.io` / `static.crates.io` | **403 from crates.io itself** — darwin-only, see `home-manager/darwin.nix` |
 | `pkgs/backport.nix` (buildNpmPackage) | `registry.npmjs.org`, `raw.githubusercontent.com` | untested |
 | `pkgs/troubleshoot-live.nix` (buildGoModule) | `github.com`, `proxy.golang.org` | untested |
 
 A failure looks like `curl: (22) The requested URL returned error: 403` inside
-a `download-*`, `*-npm-deps` or `*-go-modules` derivation. That is egress
-policy, not a broken package.
-
-Check a host by hand before assuming Nix is at fault:
+a `download-*`, `*-npm-deps` or `*-go-modules` derivation. That is almost never
+a broken package — check the host by hand first, and read the response headers,
+because they say who is refusing:
 
 ```sh
-curl -sS -o /dev/null -w '%{http_code}\n' \
-  https://crates.io/api/v1/crates/filedescriptor/0.8.3/download
-curl -sS -o /dev/null -w '%{http_code}\n' \
-  https://registry.npmjs.org/backport
-curl -sS -o /dev/null -w '%{http_code}\n' \
-  https://proxy.golang.org/github.com/mhrabovcin/troubleshoot-live/@v/list
+curl -sSI https://crates.io/api/v1/crates/filedescriptor/0.8.3/download
+curl -sSI https://registry.npmjs.org/backport
+curl -sSI https://proxy.golang.org/github.com/mhrabovcin/troubleshoot-live/@v/list
 ```
 
-- **403 with no proxy set in the environment** — the corporate edge blocks the
-  host outright and no Nix-side setting changes that. It needs an allowlist
-  request. Until then, keep the affected package off this host: move it out of
-  `home-manager/base.nix` into `home-manager/darwin.nix`, which is exactly what
-  `tuicr` does today.
+- **The 403 carries the upstream's own headers** (for crates.io: `via: 1.1
+  varnish`, `x-served-by: cache-*`) — the request reached the real host and the
+  host refused it. Nothing on the local network or in Nix is involved. For
+  crates.io this is usually its crawler policy rejecting the User-Agent, so
+  retry with a descriptive one before concluding anything:
+
+  ```sh
+  curl -sS -o /dev/null -w '%{http_code}\n' -A 'you (you@example.com)' \
+    https://crates.io/api/v1/crates/filedescriptor/0.8.3/download
+  ```
+
+  If that still 403s from this box but the same URL works elsewhere, the egress
+  IP itself is being refused upstream.
+- **The 403 comes back as a block page or from an unexpected intermediary** —
+  then it is corporate filtering, and it needs an allowlist request.
 - **403 while `env | grep -i proxy` shows a proxy** — the daemon is the one
   missing it. Fixed-output derivations inherit proxy settings from
   nix-daemon's environment, not from your shell, so a `https_proxy` exported in
@@ -170,6 +176,10 @@ curl -sS -o /dev/null -w '%{http_code}\n' \
   EOF
   sudo systemctl daemon-reload && sudo systemctl restart nix-daemon
   ```
+
+While a host stays unreachable, keep the affected package off this box: move it
+out of `home-manager/base.nix` into `home-manager/darwin.nix`, which is exactly
+what `tuicr` does today.
 
 Everything else in the profile is substituted from `cache.nixos.org`, which is
 reachable, so this only ever affects the table above.
