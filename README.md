@@ -137,14 +137,38 @@ sudo nix-collect-garbage -d   # everything unreachable, store-wide
 du -sh /nix && df -h /
 ```
 
-If the store genuinely needs more room, check for free extents in the volume
-group before moving anything. Growing the root LV is far simpler and needs no
-downtime:
+If the store genuinely needs more room, find out how `/` is provisioned before
+reaching for any of the options below — they are not interchangeable:
 
 ```sh
-sudo vgs                                        # look for free PE / VFree
-sudo lvextend -r -l +100%FREE /dev/mapper/rocky-root
+lsblk -f        # is / a logical volume, or a plain partition?
+sudo vgs        # VFree is what decides everything here
+sudo lvs
 ```
+
+On this box `/` is a plain XFS partition (`sda5`), **not** a logical volume, so
+`lvextend` cannot grow it. `/dev/sdb1` is active swap. The volume groups are
+`data` (home, opt, var) and `vardata` (varlog, varlogaudit, vartmp).
+
+**If `/` is a logical volume and its VG has free extents** — the simple case,
+no downtime:
+
+```sh
+sudo lvextend -r -l +100%FREE /dev/mapper/<vg>-<root-lv>
+```
+
+**If `/` is a plain partition but a VG has free extents** — the case here.
+Carve a new logical volume for the store rather than repartitioning:
+
+```sh
+sudo lvcreate -L 40G -n nix data
+sudo mkfs.xfs /dev/data/nix
+```
+
+then follow the relocation steps below with `NEWDEV=/dev/data/nix`, skipping
+their `mkfs` (already done above). This is preferable to a raw second disk:
+the device name is unambiguous, and the LV can be grown later with
+`lvextend -r`.
 
 #### Relocating /nix to another volume
 
