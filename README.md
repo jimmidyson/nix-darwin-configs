@@ -123,66 +123,65 @@ nix flake update home-manager         # bump one input
 Roll back by running `activate` from an older generation listed by
 `home-manager generations`.
 
-### When a package has to build from source
+### Source builds and the crates.io User-Agent block
 
 Most of the closure comes from `cache.nixos.org`. A few packages cannot: they
 are not in nixpkgs, so nothing has ever cached them and the daemon must fetch
 their sources itself.
 
-| Package | Fetches from | Status on the Rocky box |
-| --- | --- | --- |
-| `tuicr` (flake input, naersk) | `crates.io` / `static.crates.io` | **403 from crates.io itself** — darwin-only, see `home-manager/darwin.nix` |
-| `pkgs/backport.nix` (buildNpmPackage) | `registry.npmjs.org`, `raw.githubusercontent.com` | untested |
-| `pkgs/troubleshoot-live.nix` (buildGoModule) | `github.com`, `proxy.golang.org` | untested |
+| Package | Fetches from |
+| --- | --- |
+| `tuicr` (flake input, naersk) | `crates.io` / `static.crates.io` |
+| `pkgs/backport.nix` (buildNpmPackage) | `registry.npmjs.org`, `raw.githubusercontent.com` |
+| `pkgs/troubleshoot-live.nix` (buildGoModule) | `github.com`, `proxy.golang.org` |
 
-A failure looks like `curl: (22) The requested URL returned error: 403` inside
-a `download-*`, `*-npm-deps` or `*-go-modules` derivation. That is almost never
-a broken package — check the host by hand first, and read the response headers,
-because they say who is refusing:
+crates.io blocklists certain User-Agents — see
+[rust-lang/crates.io#13482](https://github.com/rust-lang/crates.io/issues/13482).
+nixpkgs' `fetchurl` identifies itself as `curl/<version> Nixpkgs/<version>`,
+which gets a 403, so any crate download fails with:
 
-```sh
-curl -sSI https://crates.io/api/v1/crates/filedescriptor/0.8.3/download
-curl -sSI https://registry.npmjs.org/backport
-curl -sSI https://proxy.golang.org/github.com/mhrabovcin/troubleshoot-live/@v/list
+```
+curl: (22) The requested URL returned error: 403
+error: cannot download download-filedescriptor-0.8.3 from any mirror
 ```
 
-- **The 403 carries the upstream's own headers** (for crates.io: `via: 1.1
-  varnish`, `x-served-by: cache-*`) — the request reached the real host and the
-  host refused it. Nothing on the local network or in Nix is involved. For
-  crates.io this is usually its crawler policy rejecting the User-Agent, so
-  retry with a descriptive one before concluding anything:
+It looks like a network block but is not one: the 403 carries crates.io's own
+Fastly headers (`via: 1.1 varnish`, `x-served-by: cache-*`), so the request
+reached the real host and the host refused it. Any identifying User-Agent gets
+a 302.
 
-  ```sh
-  curl -sS -o /dev/null -w '%{http_code}\n' -A 'you (you@example.com)' \
-    https://crates.io/api/v1/crates/filedescriptor/0.8.3/download
-  ```
+`fetchurl` appends `$NIX_CURL_FLAGS` *after* its own `--user-agent`, and curl
+takes the last one, so overriding it fixes every fetch at once. The variable is
+in `fetchurl`'s `impureEnvVars`, but it is read from **nix-daemon's**
+environment rather than your shell, so it goes in a systemd drop-in:
 
-  If that still 403s from this box but the same URL works elsewhere, the egress
-  IP itself is being refused upstream.
-- **The 403 comes back as a block page or from an unexpected intermediary** —
-  then it is corporate filtering, and it needs an allowlist request.
-- **403 while `env | grep -i proxy` shows a proxy** — the daemon is the one
-  missing it. Fixed-output derivations inherit proxy settings from
-  nix-daemon's environment, not from your shell, so a `https_proxy` exported in
-  a login profile is invisible to the builder:
+```sh
+sudo mkdir -p /etc/systemd/system/nix-daemon.service.d
+sudo tee /etc/systemd/system/nix-daemon.service.d/curl-user-agent.conf <<'CONF'
+[Service]
+Environment=NIX_CURL_FLAGS=--user-agent jimmidyson-nixpkgs/1.0-jimmidyson@gmail.com
+CONF
+sudo systemctl daemon-reload && sudo systemctl restart nix-daemon
+```
 
-  ```sh
-  sudo mkdir -p /etc/systemd/system/nix-daemon.service.d
-  sudo tee /etc/systemd/system/nix-daemon.service.d/proxy.conf <<EOF
-  [Service]
-  Environment="https_proxy=$https_proxy"
-  Environment="http_proxy=$http_proxy"
-  Environment="no_proxy=$no_proxy"
-  EOF
-  sudo systemctl daemon-reload && sudo systemctl restart nix-daemon
-  ```
+The User-Agent must contain **no spaces**: the builder expands
+`$NIX_CURL_FLAGS` unquoted, so it is word-split and a quoted string with spaces
+arrives as several broken arguments. crates.io's policy asks for a contact
+address, so an email embedded in a space-free token satisfies both.
 
-While a host stays unreachable, keep the affected package off this box: move it
-out of `home-manager/base.nix` into `home-manager/darwin.nix`, which is exactly
-what `tuicr` does today.
+Verify with the package that fails first:
 
-Everything else in the profile is substituted from `cache.nixos.org`, which is
-reachable, so this only ever affects the table above.
+```sh
+nix build --no-link --print-out-paths 'github:agavra/tuicr?ref=v0.9.0'
+```
+
+Other 403s worth telling apart before reaching for this:
+
+- **403 while `env | grep -i proxy` shows a proxy** — the daemon is missing it.
+  Same drop-in mechanism, with `Environment="https_proxy=..."` and friends;
+  fixed-output derivations inherit proxy settings from the daemon, not you.
+- **403 returned as a block page from an intermediary** — corporate filtering,
+  which needs an allowlist request. That is not what is happening here.
 
 ### Making zsh the login shell
 

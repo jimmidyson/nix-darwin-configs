@@ -17,11 +17,12 @@ in {
   };
 
   home.packages = [
-    # Built from source via naersk, so every crate comes from crates.io, and
-    # nothing has ever cached it. crates.io's own CDN answers 403 to the Rocky
-    # box, so it cannot build there; this stays darwin-only until that is
-    # resolved. Moving it back to base.nix is the only change needed then,
-    # since linux.nix already receives `tuicr` too.
+    # Built from source via naersk, so every crate comes from crates.io and
+    # nothing has ever cached it. crates.io 403s nixpkgs' fetchurl User-Agent
+    # (rust-lang/crates.io#13482), which the Linux host works around with a
+    # NIX_CURL_FLAGS drop-in for nix-daemon — see README.md. Kept darwin-only
+    # until that is in place there; linux.nix already receives `tuicr`, so
+    # moving this back to base.nix is then the only change needed.
     tuicr.defaultPackage.${pkgs.stdenv.hostPlatform.system}
   ] ++ (with pkgs; [
     m-cli
