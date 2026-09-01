@@ -137,95 +137,63 @@ sudo nix-collect-garbage -d   # everything unreachable, store-wide
 du -sh /nix && df -h /
 ```
 
-If the store genuinely needs more room, find out how `/` is provisioned before
-reaching for any of the options below — they are not interchangeable:
+If the store genuinely needs more room, note how this box is laid out, because
+the usual advice does not apply:
 
-```sh
-lsblk -f        # is / a logical volume, or a plain partition?
-sudo vgs        # VFree is what decides everything here
-sudo lvs
+```
+sda5  xfs  /                          19G, plain partition — NOT LVM
+sdb1  swap                            active swap, never touch
+sdc   vg "vardata"  VFree 0           varlog, varlogaudit, vartmp
+sdd   vg "data"     VFree 0, 394G     home, opt, var
 ```
 
-On this box `/` is a plain XFS partition (`sda5`), **not** a logical volume, so
-`lvextend` cannot grow it. `/dev/sdb1` is active swap. The volume groups are
-`data` (home, opt, var) and `vardata` (varlog, varlogaudit, vartmp).
+`/` is not a logical volume, so `lvextend` cannot grow it. Both volume groups
+are fully allocated, so `lvcreate` cannot carve a new one either. XFS cannot
+shrink, so the space sitting free inside `/opt` and `/home` cannot be handed
+back to the VG.
 
-**If `/` is a logical volume and its VG has free extents** — the simple case,
-no downtime:
+What works is putting the store on a filesystem that has room and bind-mounting
+it into place. A bind mount is a real mount, so store paths still resolve
+normally — this is only forbidden for symlinks.
 
-```sh
-sudo lvextend -r -l +100%FREE /dev/mapper/<vg>-<root-lv>
-```
-
-**If `/` is a plain partition but a VG has free extents** — the case here.
-Carve a new logical volume for the store rather than repartitioning:
-
-```sh
-sudo lvcreate -L 40G -n nix data
-sudo mkfs.xfs /dev/data/nix
-```
-
-then follow the relocation steps below with `NEWDEV=/dev/data/nix`, skipping
-their `mkfs` (already done above). This is preferable to a raw second disk:
-the device name is unambiguous, and the LV can be grown later with
-`lvextend -r`.
-
-#### Relocating /nix to another volume
-
-Only if the VG has nothing spare **and** a genuinely unused disk is available.
-Store paths are absolute, so the new volume must be mounted **at `/nix`** — not
-symlinked, which breaks tools that resolve real paths.
-
-**Identify the target device first, and confirm it is unused.** `NEWDEV` below
-is a placeholder — there is no correct default value for it, and picking the
-wrong device destroys whatever is on it.
+`/opt` is the right target here: it is the only one of home/opt/var mounted
+without `nosuid`/`nodev`, and SELinux is Disabled on this host, so no context
+equivalency rule is needed. (Were it enforcing, a bind mount would inherit the
+*underlying* path's labels and need
+`semanage fcontext -a -e /nix /opt/nix && restorecon -R /opt/nix`.)
 
 ```sh
-lsblk -f                  # what exists, what is mounted, what has a filesystem
-sudo pvs                  # is it already an LVM physical volume?
-sudo swapon --show        # is it swap?
-grep "$NEWDEV" /proc/mounts
-```
+# 0. Collect garbage first — do not copy what you are about to delete.
+sudo nix-collect-garbage -d
+du -sh /nix && df -h /opt
 
-The device is safe to format only if it appears in none of those. If `mkfs`
-reports `Device or resource busy`, the kernel is holding it — it is mounted, a
-PV, or swap. That is the safety check working; do not pass `-f`, go back and
-find out what is using it.
-
-```sh
-NEWDEV=/dev/CHANGE_ME     # from the checks above
-
-# 1. Prepare the new volume and mount it somewhere temporary.
-sudo mkfs.xfs "$NEWDEV"
-sudo mkdir -p /mnt/newnix && sudo mount "$NEWDEV" /mnt/newnix
-
-# 2. Stop everything that touches the store. Exit any devbox/nix shells first.
+# 1. Stop everything touching the store. Exit devbox/nix shells first.
 sudo systemctl stop nix-daemon.service nix-daemon.socket
 
-# 3. Copy. -H is essential: the store is heavily hardlinked by nix.optimise,
-#    and without it the copy balloons. -AX carries ACLs and SELinux contexts.
-sudo rsync -aHAX --numeric-ids --info=progress2 /nix/ /mnt/newnix/
+# 2. Copy. -H is essential: the store is heavily hardlinked by nix.optimise,
+#    and without it the copy balloons. Expect this to take a while.
+sudo mkdir -p /opt/nix
+sudo rsync -aHAX --numeric-ids --info=progress2 /nix/ /opt/nix/
 
-# 4. Swap them, keeping the original until the new one is proven.
-sudo umount /mnt/newnix
+# 3. Swap them, keeping the original until the new one is proven. Both the
+#    rename and the new directory are on /, so neither needs free space.
 sudo mv /nix /nix.old && sudo mkdir /nix
-echo "UUID=$(sudo blkid -s UUID -o value "$NEWDEV") /nix xfs defaults 0 2" \
-  | sudo tee -a /etc/fstab
+echo '/opt/nix /nix none bind 0 0' | sudo tee -a /etc/fstab
 sudo mount /nix
-sudo restorecon -R /nix          # SELinux is enforcing on Rocky
 sudo systemctl start nix-daemon.socket
 
-# 5. Verify before reclaiming anything.
-nix store ping
+# 4. Verify before reclaiming anything.
 nix build --no-link --print-out-paths nixpkgs#hello
-ls /nix/store | wc -l            # compare against /nix.old
+ls /nix/store | wc -l    # compare with: ls /nix.old/store | wc -l
 
-# 6. Only once the above is clean:
+# 5. Only once the above is clean — this is what frees space on /.
 sudo rm -rf /nix.old
 ```
 
-Step 6 is what actually frees space on `/`, so the win does not appear until
-the old copy is gone. Keep it until you are satisfied.
+If `/opt` turns out not to have room either, the remaining options are adding a
+virtual disk to the VM (cleanest: a real mount at `/nix`, growable later) or
+trimming the profile — `google-cloud-sdk` is the worst size-to-use ratio in it
+at over 1G.
 
 ### Source builds and the crates.io User-Agent block
 
