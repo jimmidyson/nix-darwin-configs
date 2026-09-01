@@ -1,9 +1,13 @@
-{ pkgs, config, home-manager, ... }:
-{
+{ pkgs, config, lib, ... }:
+
+let
+  isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
+in {
   home.sessionPath = [
     "\${HOME}/.local/bin"
     "\${HOME}/go/bin"
     "\${HOME}/.npm-packages/bin"
+  ] ++ lib.optionals isDarwin [
     "/opt/homebrew/bin"
   ];
 
@@ -31,16 +35,25 @@
 
       assume = "source \${HOME}/.nix-profile/bin/assume";
 
+    } // (if isDarwin then {
+      # nix-darwin keeps a system profile; trim it before collecting garbage.
       nix-clean-system = "sudo /run/current-system/sw/bin/nix-env -p /nix/var/nix/profiles/system --delete-generations +5 && nix-collect-garbage";
       nix-purge = "angrr && sudo nix-env -p /nix/var/nix/profiles/system --delete-generations +5 && sudo nix-collect-garbage -d";
-    };
+    } else {
+      # Standalone home-manager owns no system profile, so the generations
+      # worth trimming are home-manager's own.
+      nix-clean-system = "home-manager expire-generations '-7 days' && nix-collect-garbage";
+      nix-purge = "angrr && home-manager expire-generations '-7 days' && nix-collect-garbage -d";
+    });
 
     history = {
       extended = true;
       ignoreAllDups = true;
     };
 
-    envExtra = ''
+    # On Linux SSH_AUTH_SOCK is set by the forwarded agent from the client, so
+    # it must not be overridden here.
+    envExtra = lib.optionalString isDarwin ''
       export SSH_AUTH_SOCK="''${HOME}"/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
     '';
 

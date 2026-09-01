@@ -1,4 +1,4 @@
-{ pkgs, config, home-manager, lib, ... }:
+{ pkgs, config, lib, ... }:
 {
   home.packages = [ pkgs.git-lfs ];
 
@@ -42,7 +42,11 @@
     signing = {
       format = "ssh";
       signByDefault = true;
-      signer = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
+      # macOS signs through the 1Password app's helper binary. On Linux the
+      # 1Password agent is reached over a forwarded SSH_AUTH_SOCK, so plain
+      # ssh-keygen signing works and home-manager's default signer is right.
+      signer = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin
+        "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
     };
 
     ignores = [

@@ -1,0 +1,162 @@
+# nix-darwin-configs
+
+Nix configuration for my machines.
+
+| Host | Platform | Managed by | Entry point |
+| --- | --- | --- | --- |
+| `V26M4P9FDJ` | `aarch64-darwin` | nix-darwin (+ home-manager as a nix-darwin module) | `nutanix-macbook-pro.nix` |
+| `jimmi-dyson.r8.ubvm.nutanix.com` | `x86_64-linux` (Rocky 8) | standalone home-manager | `nutanix-linux-vm.nix` |
+
+## Layout
+
+```
+flake.nix              darwinConfigurations + homeConfigurations
+overlays/              nixpkgs overlays, shared by both platforms
+pkgs/                  local packages not (yet) in nixpkgs
+roles/                 nix-darwin system modules (macOS only)
+home-manager/
+  base.nix             cross-platform packages and nix settings
+  darwin.nix           base.nix + macOS-only and GUI packages
+  linux.nix            base.nix + non-NixOS Linux glue
+  git.nix              \
+  programs.nix          } cross-platform, imported by both hosts
+  zsh.nix              /
+  settings.nix         wires home-manager into nix-darwin (macOS only)
+```
+
+`base.nix`, `git.nix`, `programs.nix` and `zsh.nix` are evaluated on both
+platforms, so anything macOS-specific in them is guarded with
+`pkgs.stdenv.hostPlatform.isDarwin`.
+
+## macOS
+
+```sh
+darwin-rebuild switch --flake .#V26M4P9FDJ
+```
+
+## Linux
+
+The box is Rocky 8 with Nix installed on top of the distro (it is not NixOS),
+so there is nothing for nix-darwin or a NixOS module to hook into.
+home-manager runs **standalone**: it manages `~/.nix-profile` and dotfiles under
+`~/.config`, and nothing else. Packages in `/usr`, systemd units and the login
+shell stay with `dnf`/`systemctl`.
+
+### One-time prerequisites
+
+1. **Flakes.** The Nix installed for devbox may not have them on. Check:
+
+   ```sh
+   nix --version
+   nix flake --help >/dev/null 2>&1 && echo "flakes ok" || echo "flakes off"
+   ```
+
+   If they are off, enable them daemon-wide (needs root):
+
+   ```sh
+   sudo mkdir -p /etc/nix
+   echo 'experimental-features = nix-command flakes' | sudo tee -a /etc/nix/nix.conf
+   sudo systemctl restart nix-daemon
+   ```
+
+   `home-manager/base.nix` also writes `~/.config/nix/nix.conf` with the same
+   setting, but that only applies once the first activation has happened.
+
+2. **Corporate TLS.** If `nix` cannot fetch from `cache.nixos.org` or GitHub,
+   the daemon needs the corporate root CA. This is the Linux equivalent of the
+   `security.pki.certificateFiles` block in `roles/defaults.nix`:
+
+   ```sh
+   sudo cp <corporate-root>.crt /etc/pki/ca-trust/source/anchors/
+   sudo update-ca-trust extract
+   echo 'ssl-cert-file = /etc/pki/tls/certs/ca-bundle.crt' | sudo tee -a /etc/nix/nix.conf
+   sudo systemctl restart nix-daemon
+   ```
+
+   `home-manager/linux.nix` points `SSL_CERT_FILE` and friends at that same
+   bundle for everything running in the shell.
+
+### First activation
+
+There is no `home-manager` command yet, so build the activation package
+straight out of this flake and run it. This uses the home-manager pinned in
+`flake.lock` rather than whatever the registry resolves to.
+
+```sh
+git clone <this repo> ~/src/nix-darwin-configs
+cd ~/src/nix-darwin-configs
+
+ATTR='homeConfigurations."jimmi.dyson@jimmi-dyson".activationPackage'
+nix build --no-link ".#$ATTR"
+HOME_MANAGER_BACKUP_EXT=backup "$(nix path-info ".#$ATTR")"/activate
+```
+
+The quoting matters: the attribute name contains a `.`, so it has to be
+quoted inside the flake selector.
+
+`HOME_MANAGER_BACKUP_EXT` is what `-b` sets on the CLI, and it is worth setting
+here: activation refuses to clobber an existing unmanaged file, and the devbox
+setup very likely already left a `~/.config/nix/nix.conf` and possibly a
+`~/.zshenv`. With it set, those are moved aside to `*.backup` instead of
+aborting the run.
+
+### Every activation after that
+
+`programs.home-manager.enable` put the CLI in the profile, and the attribute is
+named `$USER@$(hostname -s)`, which home-manager looks up by itself:
+
+```sh
+cd ~/src/nix-darwin-configs
+home-manager switch --flake .
+```
+
+Useful variations:
+
+```sh
+home-manager build --flake .          # build without activating
+home-manager switch --flake . -b backup  # move clobbered files aside
+home-manager generations              # list previous generations
+nix flake update                      # bump all inputs
+nix flake update home-manager         # bump one input
+```
+
+Roll back by running `activate` from an older generation listed by
+`home-manager generations`.
+
+### Making zsh the login shell
+
+home-manager installs zsh into the profile but cannot change the login shell —
+`chsh` only accepts shells listed in `/etc/shells`, and a Nix store path is not
+there. Either:
+
+```sh
+# Option A: register the profile's zsh (needs root, and re-register after
+# a zsh version bump because the store path changes).
+command -v zsh | sudo tee -a /etc/shells
+chsh -s "$(command -v zsh)"
+```
+
+or leave the login shell as bash and exec into zsh from `~/.bashrc`:
+
+```sh
+# Option B: no root needed.
+if [[ $- == *i* && -z "$ZSH_VERSION" && -x "$HOME/.nix-profile/bin/zsh" ]]; then
+  exec "$HOME/.nix-profile/bin/zsh" -l
+fi
+```
+
+### Garbage collection
+
+There is no `nix.gc` timer here because that is a root-level concern on a
+non-NixOS box. The `nix-clean-system` and `nix-purge` aliases in `zsh.nix` do
+the user-profile half:
+
+```sh
+home-manager expire-generations '-7 days'
+nix-collect-garbage
+```
+
+## Adding another Linux host
+
+Add a host file next to `nutanix-linux-vm.nix` importing `home-manager/linux.nix`,
+then a `homeConfigurations."<user>@<short-hostname>"` entry in `flake.nix`.
