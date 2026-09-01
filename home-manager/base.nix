@@ -1,4 +1,4 @@
-{ config, pkgs, tuicr, lib, ... }:
+{ config, pkgs, lib, ... }:
 
 let
   homeDir = config.home.homeDirectory;
@@ -35,9 +35,7 @@ in {
     keep-latest-n = 5
   '';
 
-  home.packages = [
-    tuicr.defaultPackage.${pkgs.stdenv.hostPlatform.system}
-  ] ++ (with pkgs; [
+  home.packages = with pkgs; [
     _1password-cli
     amazon-ecr-credential-helper
     angrr
@@ -134,5 +132,5 @@ in {
         helm-s3
       ];
     })
-  ]);
+  ];
 }

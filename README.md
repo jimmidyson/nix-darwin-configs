@@ -125,49 +125,54 @@ Roll back by running `activate` from an older generation listed by
 
 ### When a package has to build from source
 
-Most of the closure comes from `cache.nixos.org`. Three packages cannot: they
+Most of the closure comes from `cache.nixos.org`. A few packages cannot: they
 are not in nixpkgs, so nothing has ever cached them and the daemon must fetch
 their sources itself.
 
-| Package | Fetches from |
-| --- | --- |
-| `tuicr` (flake input, naersk) | `crates.io` / `static.crates.io` |
-| `pkgs/backport.nix` (buildNpmPackage) | `registry.npmjs.org`, `raw.githubusercontent.com` |
-| `pkgs/troubleshoot-live.nix` (buildGoModule) | `github.com`, `proxy.golang.org` |
+| Package | Fetches from | Status on the Rocky box |
+| --- | --- | --- |
+| `tuicr` (flake input, naersk) | `crates.io` / `static.crates.io` | **blocked** — darwin-only, see `home-manager/darwin.nix` |
+| `pkgs/backport.nix` (buildNpmPackage) | `registry.npmjs.org`, `raw.githubusercontent.com` | untested |
+| `pkgs/troubleshoot-live.nix` (buildGoModule) | `github.com`, `proxy.golang.org` | untested |
 
-A failure here looks like `curl: (22) The requested URL returned error: 403`
-inside a `download-*` or `*-go-modules` derivation. It is an egress problem,
-not a broken package.
+A failure looks like `curl: (22) The requested URL returned error: 403` inside
+a `download-*`, `*-npm-deps` or `*-go-modules` derivation. That is egress
+policy, not a broken package.
 
-The catch is that **fixed-output derivations inherit proxy settings from
-nix-daemon's environment, not from your shell**. A corporate `https_proxy`
-exported in `~/.bashrc` is invisible to the builder. Give the daemon its own
-copy:
-
-```sh
-sudo mkdir -p /etc/systemd/system/nix-daemon.service.d
-sudo tee /etc/systemd/system/nix-daemon.service.d/proxy.conf <<EOF
-[Service]
-Environment="https_proxy=$https_proxy"
-Environment="http_proxy=$http_proxy"
-Environment="no_proxy=$no_proxy"
-EOF
-sudo systemctl daemon-reload && sudo systemctl restart nix-daemon
-```
-
-To tell the two cases apart, try the fetch by hand as your own user:
+Check a host by hand before assuming Nix is at fault:
 
 ```sh
 curl -sS -o /dev/null -w '%{http_code}\n' \
   https://crates.io/api/v1/crates/filedescriptor/0.8.3/download
+curl -sS -o /dev/null -w '%{http_code}\n' \
+  https://registry.npmjs.org/backport
+curl -sS -o /dev/null -w '%{http_code}\n' \
+  https://proxy.golang.org/github.com/mhrabovcin/troubleshoot-live/@v/list
 ```
 
-- **302 or 200** — the host is reachable and the daemon is simply missing the
-  proxy vars. Apply the drop-in above.
-- **403** — the corporate edge blocks the host outright. No Nix-side config
-  fixes that; it needs an allowlist. Until then, drop the affected package from
-  the Linux profile (for `tuicr`, move it from `home-manager/base.nix` to
-  `home-manager/darwin.nix`, which already receives it via `extraSpecialArgs`).
+- **403 with no proxy set in the environment** — the corporate edge blocks the
+  host outright and no Nix-side setting changes that. It needs an allowlist
+  request. Until then, keep the affected package off this host: move it out of
+  `home-manager/base.nix` into `home-manager/darwin.nix`, which is exactly what
+  `tuicr` does today.
+- **403 while `env | grep -i proxy` shows a proxy** — the daemon is the one
+  missing it. Fixed-output derivations inherit proxy settings from
+  nix-daemon's environment, not from your shell, so a `https_proxy` exported in
+  a login profile is invisible to the builder:
+
+  ```sh
+  sudo mkdir -p /etc/systemd/system/nix-daemon.service.d
+  sudo tee /etc/systemd/system/nix-daemon.service.d/proxy.conf <<EOF
+  [Service]
+  Environment="https_proxy=$https_proxy"
+  Environment="http_proxy=$http_proxy"
+  Environment="no_proxy=$no_proxy"
+  EOF
+  sudo systemctl daemon-reload && sudo systemctl restart nix-daemon
+  ```
+
+Everything else in the profile is substituted from `cache.nixos.org`, which is
+reachable, so this only ever affects the table above.
 
 ### Making zsh the login shell
 
