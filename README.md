@@ -148,14 +148,32 @@ sudo lvextend -r -l +100%FREE /dev/mapper/rocky-root
 
 #### Relocating /nix to another volume
 
-Only if the VG has nothing spare and a second disk is available. Store paths
-are absolute, so the new volume must be mounted **at `/nix`** — not symlinked,
-which breaks tools that resolve real paths.
+Only if the VG has nothing spare **and** a genuinely unused disk is available.
+Store paths are absolute, so the new volume must be mounted **at `/nix`** — not
+symlinked, which breaks tools that resolve real paths.
+
+**Identify the target device first, and confirm it is unused.** `NEWDEV` below
+is a placeholder — there is no correct default value for it, and picking the
+wrong device destroys whatever is on it.
 
 ```sh
+lsblk -f                  # what exists, what is mounted, what has a filesystem
+sudo pvs                  # is it already an LVM physical volume?
+sudo swapon --show        # is it swap?
+grep "$NEWDEV" /proc/mounts
+```
+
+The device is safe to format only if it appears in none of those. If `mkfs`
+reports `Device or resource busy`, the kernel is holding it — it is mounted, a
+PV, or swap. That is the safety check working; do not pass `-f`, go back and
+find out what is using it.
+
+```sh
+NEWDEV=/dev/CHANGE_ME     # from the checks above
+
 # 1. Prepare the new volume and mount it somewhere temporary.
-sudo mkfs.xfs /dev/sdb1
-sudo mkdir -p /mnt/newnix && sudo mount /dev/sdb1 /mnt/newnix
+sudo mkfs.xfs "$NEWDEV"
+sudo mkdir -p /mnt/newnix && sudo mount "$NEWDEV" /mnt/newnix
 
 # 2. Stop everything that touches the store. Exit any devbox/nix shells first.
 sudo systemctl stop nix-daemon.service nix-daemon.socket
@@ -167,7 +185,7 @@ sudo rsync -aHAX --numeric-ids --info=progress2 /nix/ /mnt/newnix/
 # 4. Swap them, keeping the original until the new one is proven.
 sudo umount /mnt/newnix
 sudo mv /nix /nix.old && sudo mkdir /nix
-echo "UUID=$(sudo blkid -s UUID -o value /dev/sdb1) /nix xfs defaults 0 2" \
+echo "UUID=$(sudo blkid -s UUID -o value "$NEWDEV") /nix xfs defaults 0 2" \
   | sudo tee -a /etc/fstab
 sudo mount /nix
 sudo restorecon -R /nix          # SELinux is enforcing on Rocky
