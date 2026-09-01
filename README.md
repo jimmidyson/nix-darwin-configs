@@ -123,6 +123,68 @@ nix flake update home-manager         # bump one input
 Roll back by running `activate` from an older generation listed by
 `home-manager generations`.
 
+### Giving the Nix store room
+
+The store lives on `/`, and this box ships a 19G root. A full profile plus
+devbox's own store fills it, and the failure mode is a build dying with
+`no space left on device`.
+
+Reclaim dead paths first — this is safe and usually the whole fix:
+
+```sh
+nix-collect-garbage -d        # your profiles and gcroots
+sudo nix-collect-garbage -d   # everything unreachable, store-wide
+du -sh /nix && df -h /
+```
+
+If the store genuinely needs more room, check for free extents in the volume
+group before moving anything. Growing the root LV is far simpler and needs no
+downtime:
+
+```sh
+sudo vgs                                        # look for free PE / VFree
+sudo lvextend -r -l +100%FREE /dev/mapper/rocky-root
+```
+
+#### Relocating /nix to another volume
+
+Only if the VG has nothing spare and a second disk is available. Store paths
+are absolute, so the new volume must be mounted **at `/nix`** — not symlinked,
+which breaks tools that resolve real paths.
+
+```sh
+# 1. Prepare the new volume and mount it somewhere temporary.
+sudo mkfs.xfs /dev/sdb1
+sudo mkdir -p /mnt/newnix && sudo mount /dev/sdb1 /mnt/newnix
+
+# 2. Stop everything that touches the store. Exit any devbox/nix shells first.
+sudo systemctl stop nix-daemon.service nix-daemon.socket
+
+# 3. Copy. -H is essential: the store is heavily hardlinked by nix.optimise,
+#    and without it the copy balloons. -AX carries ACLs and SELinux contexts.
+sudo rsync -aHAX --numeric-ids --info=progress2 /nix/ /mnt/newnix/
+
+# 4. Swap them, keeping the original until the new one is proven.
+sudo umount /mnt/newnix
+sudo mv /nix /nix.old && sudo mkdir /nix
+echo "UUID=$(sudo blkid -s UUID -o value /dev/sdb1) /nix xfs defaults 0 2" \
+  | sudo tee -a /etc/fstab
+sudo mount /nix
+sudo restorecon -R /nix          # SELinux is enforcing on Rocky
+sudo systemctl start nix-daemon.socket
+
+# 5. Verify before reclaiming anything.
+nix store ping
+nix build --no-link --print-out-paths nixpkgs#hello
+ls /nix/store | wc -l            # compare against /nix.old
+
+# 6. Only once the above is clean:
+sudo rm -rf /nix.old
+```
+
+Step 6 is what actually frees space on `/`, so the win does not appear until
+the old copy is gone. Keep it until you are satisfied.
+
 ### Source builds and the crates.io User-Agent block
 
 Most of the closure comes from `cache.nixos.org`. A few packages cannot: they
