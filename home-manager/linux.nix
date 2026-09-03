@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, nix-auth, ... }:
 
 let
   # Rocky's system trust store, as maintained by `update-ca-trust`. This is
@@ -31,8 +31,12 @@ in {
     NODE_EXTRA_CA_CERTS = caBundle;
   };
 
-  home.packages = with pkgs; [
-    # On darwin these come from roles/defaults.nix's environment.systemPackages,
+  home.packages = [
+    # Manages ~/.config/nix/access-tokens.conf, which base.nix already
+    # `!include`s. On darwin it arrives through roles/defaults.nix.
+    nix-auth.packages.${pkgs.stdenv.hostPlatform.system}.default
+  ] ++ (with pkgs; [
+    # On darwin this comes from roles/defaults.nix's environment.systemPackages,
     # which is a nix-darwin module that standalone home-manager never evaluates.
     # zsh.nix exports EDITOR=vim and git.nix sets core.editor, so vim is not
     # optional here.
@@ -47,5 +51,5 @@ in {
     lsof
     psmisc
     util-linux
-  ];
+  ]);
 }

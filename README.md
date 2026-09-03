@@ -265,10 +265,10 @@ than shipped. Until it exists, every unknown command prints an I/O error about
 nix-index    # ~10 minutes, downloads and indexes the whole package set
 ```
 
-Re-run it occasionally to pick up new packages. Note that the darwin hosts get
-this from the nix-darwin module in `roles/defaults.nix`, along with `vim` and
-`nix-auth` in `environment.systemPackages`; standalone home-manager evaluates
-none of that, so `home-manager/linux.nix` has to provide those itself.
+Re-run it occasionally to pick up new packages. The darwin hosts get this from
+the nix-darwin module in `roles/defaults.nix`, along with `vim` and `nix-auth`
+in `environment.systemPackages`; standalone home-manager evaluates none of
+that, so `home-manager/linux.nix` provides all three itself.
 
 ### Making zsh the login shell
 
