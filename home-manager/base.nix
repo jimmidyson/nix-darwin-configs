@@ -1,4 +1,4 @@
-{ config, pkgs, home-manager, tuicr, lib, ... }:
+{ config, pkgs, lib, ... }:
 
 let
   homeDir = config.home.homeDirectory;
@@ -35,11 +35,8 @@ in {
     keep-latest-n = 5
   '';
 
-  home.packages = [
-    tuicr.defaultPackage.${pkgs.stdenv.hostPlatform.system}
-  ] ++ (with pkgs; [
+  home.packages = with pkgs; [
     _1password-cli
-    _1password-gui
     amazon-ecr-credential-helper
     angrr
     aws-iam-authenticator
@@ -53,7 +50,6 @@ in {
     curl
     delta
     diceware
-    docker
     docker-credential-helpers
     dos2unix
     fd
@@ -78,7 +74,6 @@ in {
     gopass
     granted
     graphviz
-    gvproxy
     headlamp-server
     htop
     inetutils
@@ -101,7 +96,6 @@ in {
     kubectl-view-secret
     lefthook
     libarchive
-    libvirt
     # lima
     nixpkgs-fmt
     nmap
@@ -112,7 +106,6 @@ in {
     prek
     pwgen
     python3
-    qemu
     repomix
     ripgrep
     rtk
@@ -122,7 +115,6 @@ in {
     tcpdump
     time
     tree
-    trilium-desktop
     (callPackage ../pkgs/troubleshoot-live.nix { })
     trivy
     unzip
@@ -140,5 +132,5 @@ in {
         helm-s3
       ];
     })
-  ]);
+  ];
 }

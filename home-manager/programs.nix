@@ -1,4 +1,4 @@
-{ pkgs, config, home-manager, ... }:
+{ pkgs, config, ... }:
 {
   programs = {
     awscli = {
@@ -70,12 +70,6 @@
 
     gh-dash = {
       enable = true;
-    };
-
-    ghostty = {
-      enable = true;
-      package = pkgs.ghostty-bin;
-      enableZshIntegration = true;
     };
 
     go = {
