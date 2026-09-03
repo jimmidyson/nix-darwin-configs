@@ -255,6 +255,21 @@ Other 403s worth telling apart before reaching for this:
 - **403 returned as a block page from an intermediary** — corporate filtering,
   which needs an allowlist request. That is not what is happening here.
 
+### First-run: generate the nix-index database
+
+`programs.nix-index` is enabled, but its database is generated locally rather
+than shipped. Until it exists, every unknown command prints an I/O error about
+`~/.cache/nix-index/files` instead of a plain "command not found":
+
+```sh
+nix-index    # ~10 minutes, downloads and indexes the whole package set
+```
+
+Re-run it occasionally to pick up new packages. Note that the darwin hosts get
+this from the nix-darwin module in `roles/defaults.nix`, along with `vim` and
+`nix-auth` in `environment.systemPackages`; standalone home-manager evaluates
+none of that, so `home-manager/linux.nix` has to provide those itself.
+
 ### Making zsh the login shell
 
 home-manager installs zsh into the profile but cannot change the login shell —

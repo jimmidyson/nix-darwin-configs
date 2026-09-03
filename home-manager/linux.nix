@@ -32,6 +32,12 @@ in {
   };
 
   home.packages = with pkgs; [
+    # On darwin these come from roles/defaults.nix's environment.systemPackages,
+    # which is a nix-darwin module that standalone home-manager never evaluates.
+    # zsh.nix exports EDITOR=vim and git.nix sets core.editor, so vim is not
+    # optional here.
+    vim
+
     # Headless box: no GUI pinentry, so gpg/gopass prompt in the terminal.
     pinentry-tty
 
