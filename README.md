@@ -262,8 +262,14 @@ than shipped. Until it exists, every unknown command prints an I/O error about
 `~/.cache/nix-index/files` instead of a plain "command not found":
 
 ```sh
-nix-index    # ~10 minutes, downloads and indexes the whole package set
+nix-index    # ~10 minutes, indexes the whole package set
 ```
+
+`nix-index` shells out to `nix-env -qa`, which needs `<nixpkgs>` on `NIX_PATH`.
+A flakes-only install has no channels, so `linux.nix` pins both `nix.nixPath`
+and `nix.registry.nixpkgs` to the flake's own nixpkgs. That makes `<nixpkgs>`,
+`nix shell nixpkgs#...` and `nix-index` all reuse the copy already in the
+store, rather than pulling a second nixpkgs onto a 19G disk.
 
 Re-run it occasionally to pick up new packages. The darwin hosts get this from
 the nix-darwin module in `roles/defaults.nix`, along with `vim` and `nix-auth`

@@ -52,7 +52,7 @@
     homeConfigurations = {
       "jimmi.dyson@jimmi-dyson" = home-manager.lib.homeManagerConfiguration {
         pkgs = mkPkgs "x86_64-linux";
-        extraSpecialArgs = { inherit tuicr nix-auth; };
+        extraSpecialArgs = { inherit tuicr nix-auth nixpkgs; };
         modules = [
           ./nutanix-linux-vm.nix
         ];

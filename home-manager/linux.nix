@@ -1,4 +1,4 @@
-{ config, pkgs, lib, nix-auth, ... }:
+{ config, pkgs, lib, nix-auth, nixpkgs, ... }:
 
 let
   # Rocky's system trust store, as maintained by `update-ca-trust`. This is
@@ -18,6 +18,15 @@ in {
   # Standalone home-manager has to install its own CLI; on darwin the
   # nix-darwin module drives activation instead.
   programs.home-manager.enable = true;
+
+  # This is a flakes-only install with no channels, so `<nixpkgs>` resolves to
+  # nothing and anything shelling out to nix-env fails — `nix-index` is the one
+  # that bites first. Point both the search path and the registry at the exact
+  # nixpkgs this config is built from: `<nixpkgs>`, `nix shell nixpkgs#...` and
+  # nix-index then all reuse the copy already in the store instead of fetching
+  # a second one, which matters on a 19G disk.
+  nix.nixPath = [ "nixpkgs=${nixpkgs}" ];
+  nix.registry.nixpkgs.flake = nixpkgs;
 
   # `nix-locate` / command-not-found handler. On darwin this comes from the
   # nix-darwin module in roles/defaults.nix, which standalone home-manager
