@@ -61,25 +61,25 @@ in {
   '';
 
   # 1. Inject the Umbrella certificate alongside standard internet certs
-  security.pki.certificateFiles = [
-    "/etc/nix/certs/Cisco_Secure_Access_Root_CA.cer"
-  ];
-  nix.settings.extra-sandbox-paths = [
-    "/etc/nix/certs/Cisco_Secure_Access_Root_CA.cer"
-  ];
+  #security.pki.certificateFiles = [
+  #  "/etc/nix/certs/Cisco_Secure_Access_Root_CA.cer"
+  #];
+  #nix.settings.extra-sandbox-paths = [
+  #  "/etc/nix/certs/Cisco_Secure_Access_Root_CA.cer"
+  #];
 
   # 2. Force Nix-managed tools (curl, openssl, python, etc.) to use the combined bundle
-  environment.variables = {
-    NIX_SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
-    SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
-    REQUEST_CA_BUNDLE = "/etc/ssl/certs/ca-certificates.crt";
-    NODE_EXTRA_CA_CERTS = "/etc/ssl/certs/ca-certificates.crt";
-  };
-  nix.envVars = {
-    SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
-    NIX_SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
-    NODE_EXTRA_CA_CERTS = "/etc/ssl/certs/ca-certificates.crt";
-  };
+  #environment.variables = {
+  #  NIX_SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
+  #  SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
+  #  REQUEST_CA_BUNDLE = "/etc/ssl/certs/ca-certificates.crt";
+  #  NODE_EXTRA_CA_CERTS = "/etc/ssl/certs/ca-certificates.crt";
+  #};
+  #nix.envVars = {
+  #  SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
+  #  NIX_SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
+  #  NODE_EXTRA_CA_CERTS = "/etc/ssl/certs/ca-certificates.crt";
+  #};
 
   # 3. Belt-and-suspenders: also set the daemon-side Nix setting in
   #    /etc/nix/nix.conf, so fixed-output fetches (fetchFromGitHub, buildGoModule
@@ -87,7 +87,7 @@ in {
   #    launchd environment is stale. nix-daemon reads this at startup, so it only
   #    takes effect after the daemon restarts (darwin-rebuild switch restarts it
   #    on a nix.conf change).
-  nix.settings.ssl-cert-file = "/etc/ssl/certs/ca-certificates.crt";
+  #nix.settings.ssl-cert-file = "/etc/ssl/certs/ca-certificates.crt";
 
   nix.optimise = {
     automatic = true;

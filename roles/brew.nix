@@ -43,15 +43,15 @@
     ];
     casks = [
       "betterdisplay"
-      "firefox"
+      #"firefox"
       "font-droid-sans-mono-for-powerline"
       "font-fira-code"
       "font-iosevka-nerd-font"
       "iterm2"
       "notunes"
       "opencode-desktop"
-      "skhd-zig"
-      "tailscale-app"
+      # "skhd-zig"
+      #"tailscale-app"
     ];
   };
 }

@@ -3,7 +3,7 @@
 let
   homeDir = config.home.homeDirectory;
 in {
-  home.stateVersion = "26.05";
+  home.stateVersion = "26.11";
   home.enableNixpkgsReleaseCheck = false;
 
   nix = {
@@ -44,6 +44,7 @@ in {
     bash
     bind
     bun
+    byobu
     cacert
     coreutils
     crane
@@ -97,6 +98,7 @@ in {
     lefthook
     libarchive
     # lima
+    mosh
     nixpkgs-fmt
     nmap
     nodejs

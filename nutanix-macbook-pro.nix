@@ -2,14 +2,14 @@
 
 
 let
-  hostname = "V26M4P9FDJ";
+  hostname = "H6GQ16XX6K";
   username = "jimmi.dyson";
 in {
   imports = [
     roles/m1.nix
     roles/defaults.nix
     roles/brew.nix
-    roles/yabai.nix
+    #roles/yabai.nix
     #roles/skhd.nix
     home-manager/settings.nix
   ];

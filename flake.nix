@@ -32,13 +32,16 @@
   in {
     # macOS hosts: managed by nix-darwin, which also drives home-manager as a
     # nix-darwin module (see home-manager/settings.nix).
-    #   darwin-rebuild switch --flake .#V26M4P9FDJ
+    #   darwin-rebuild switch --flake .#H6GQ16XX6K
     darwinConfigurations = {
-      "V26M4P9FDJ" = darwin.lib.darwinSystem {
+      "H6GQ16XX6K" = darwin.lib.darwinSystem {
         system = "aarch64-darwin";
         specialArgs = inputs;
         modules = [
           ./nutanix-macbook-pro.nix
+          {
+            ids.gids.nixbld = 350;
+          }
         ];
       };
     };
