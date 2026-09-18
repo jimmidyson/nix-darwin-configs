@@ -38,6 +38,7 @@ in {
     SSL_CERT_FILE = caBundle;
     REQUESTS_CA_BUNDLE = caBundle;
     NODE_EXTRA_CA_CERTS = caBundle;
+    UV_PYTHON_PREFERENCE = "only-managed";
   };
 
   home.packages = [
