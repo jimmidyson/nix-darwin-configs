@@ -105,7 +105,15 @@
     tmux = {
       enable = true;
       clock24 = true;
+      historyLimit = 10000;
       keyMode = "vi";
+      mouse = true;
+      terminal = "tmux-screen256";
+
+      extraConfig = ''
+        bind-key -T copy-mode MouseDragEnd1Pane send-keys -X copy-selection
+        bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-selection
+      '';
 
       tmuxp.enable = true;
     };
