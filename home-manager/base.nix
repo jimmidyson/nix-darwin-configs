@@ -44,7 +44,6 @@ in {
     bash
     bind
     bun
-    byobu
     cacert
     coreutils
     crane

@@ -76,6 +76,45 @@
       enable = true;
     };
 
+    herdr = {
+      enable = true;
+      settings = {
+        keys = {
+          command = [
+            {
+              command = "example.layout.apply";
+              description = "apply layout";
+              key = "prefix+l";
+              type = "plugin_action";
+            }
+          ];
+          prefix = "ctrl+a";
+        };
+        onboarding = false;
+        terminal = {
+          default_shell = "zsh";
+          new_cwd = "follow";
+          shell_mode = "auto";
+        };
+        theme = {
+          auto_switch = true;
+          dark_name = "catppuccin";
+          light_name = "catppuccin-latte";
+          name = "catppuccin";
+        };
+        ui = {
+          agent_panel_sort = "priority";
+          sidebar_width = 32;
+          sound = {
+            enabled = false;
+          };
+          toast = {
+            delivery = "terminal";
+          };
+        };
+      };
+    };
+
     java = {
       enable = true;
     };
@@ -108,7 +147,7 @@
       historyLimit = 10000;
       keyMode = "vi";
       mouse = true;
-      terminal = "tmux-screen256";
+      terminal = "screen-screen256";
 
       extraConfig = ''
         bind-key -T copy-mode MouseDragEnd1Pane send-keys -X copy-selection
