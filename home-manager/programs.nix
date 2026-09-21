@@ -102,6 +102,14 @@
       };
     };
 
+    tmux = {
+      enable = true;
+      clock24 = true;
+      keyMode = "vi";
+
+      tmuxp.enable = true;
+    };
+
     zoxide = {
       enable = true;
     };

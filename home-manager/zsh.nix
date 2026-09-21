@@ -120,6 +120,8 @@ in {
       source ${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh
 
       eval "$(fnm env --use-on-cd --shell zsh)"
+
+      _byobu_sourced=1 . ~/.nix-profile/bin/byobu-launch 2>/dev/null || true
     '';
 
     oh-my-zsh = {
