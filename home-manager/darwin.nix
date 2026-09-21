@@ -14,6 +14,30 @@ in {
     enable = true;
     package = pkgs.ghostty-bin;
     enableZshIntegration = true;
+    installBatSyntax = true;
+    installVimSyntax = true;
+    settings = {
+      # Appearance
+      theme = "light:Catppuccin Latte,dark:Catppuccin Macchiato";
+      font-size = 13;
+      window-padding-x = 6;
+      window-padding-y = 6;
+
+      # Behaviour
+      copy-on-select = "clipboard";
+      mouse-hide-while-typing = true;
+      confirm-close-surface = false;
+      window-inherit-working-directory = true;
+
+      # Shell integration (builds on the ssh options from before)
+      shell-integration-features = "cursor,sudo,title,ssh-env,ssh-terminfo";
+
+      # macOS only: makes Option act as Alt in vim, tmux, readline, etc.
+      macos-option-as-alt = true;
+
+      # Optional drop-down terminal (needs accessibility permission)
+      keybind = "global:ctrl+alt+space=toggle_quick_terminal";
+    };
   };
 
   home.packages = [
@@ -30,7 +54,6 @@ in {
 
     # GUI applications.
     _1password-gui
-    trilium-desktop
 
     # lima/VM tooling: only the mac runs Linux VMs.
     docker
