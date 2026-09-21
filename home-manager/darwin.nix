@@ -30,13 +30,13 @@ in {
       window-inherit-working-directory = true;
 
       # Shell integration (builds on the ssh options from before)
-      shell-integration-features = "cursor,sudo,title,ssh-env,ssh-terminfo";
+      shell-integration-features = "cursor,sudo,title,ssh-env";
 
       # macOS only: makes Option act as Alt in vim, tmux, readline, etc.
       macos-option-as-alt = true;
 
       # Optional drop-down terminal (needs accessibility permission)
-      keybind = "global:ctrl+alt+space=toggle_quick_terminal";
+      keybind = "global:ctrl+grave_accent=toggle_quick_terminal";
     };
   };
 
