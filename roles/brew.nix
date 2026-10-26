@@ -14,6 +14,7 @@
       "lima"
       "modify-secret"
       "ollama"
+      "omp"
       "opencode"
       "pinentry-mac"
       "socket_vmnet"
@@ -38,6 +39,10 @@
       }
       {
         name = "anomalyco/tap";
+        trusted = true;
+      }
+      {
+        name = "can1357/tap";
         trusted = true;
       }
       # "chipmk/tap"
