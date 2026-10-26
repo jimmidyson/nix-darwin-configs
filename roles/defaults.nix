@@ -1,7 +1,10 @@
 { config, pkgs, nix-auth,... }:
 
 let
-  system = pkgs.system;
+  # nix-darwin concatenates this with the Mozilla bundle. Nix curl's OpenSSL
+  # and nix-daemon both read it via NIX_SSL_CERT_FILE; the macOS keychain is
+  # a different trust store and does not apply to them.
+  caBundle = "/etc/ssl/certs/ca-certificates.crt";
 in {
   #package config
   nixpkgs = {
@@ -60,34 +63,26 @@ in {
     max-free = ${toString (50 * 1024 * 1024 * 1024)} # 50 GB
   '';
 
-  # 1. Inject the Umbrella certificate alongside standard internet certs
-  #security.pki.certificateFiles = [
-  #  "/etc/nix/certs/Cisco_Secure_Access_Root_CA.cer"
-  #];
-  #nix.settings.extra-sandbox-paths = [
-  #  "/etc/nix/certs/Cisco_Secure_Access_Root_CA.cer"
-  #];
+  # Cisco Secure Access intercepts TLS. The System keychain trusts only the
+  # Root CA; the Primary SubCA is an intermediate sent in the handshake, so it
+  # does not belong in this bundle. The ZTNA device identity cert is not a CA.
+  security.pki.certificateFiles = [
+    ../certs/cisco-secure-access-root-ca.crt
+  ];
 
-  # 2. Force Nix-managed tools (curl, openssl, python, etc.) to use the combined bundle
-  #environment.variables = {
-  #  NIX_SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
-  #  SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
-  #  REQUEST_CA_BUNDLE = "/etc/ssl/certs/ca-certificates.crt";
-  #  NODE_EXTRA_CA_CERTS = "/etc/ssl/certs/ca-certificates.crt";
-  #};
-  #nix.envVars = {
-  #  SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
-  #  NIX_SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
-  #  NODE_EXTRA_CA_CERTS = "/etc/ssl/certs/ca-certificates.crt";
-  #};
+  # NIX_SSL_CERT_FILE is already pointed at caBundle by security.pki. These
+  # cover the tools that never look at that variable: OpenSSL's SSL_CERT_FILE,
+  # requests, and Node.
+  environment.variables = {
+    SSL_CERT_FILE = caBundle;
+    REQUESTS_CA_BUNDLE = caBundle;
+    NODE_EXTRA_CA_CERTS = caBundle;
+  };
 
-  # 3. Belt-and-suspenders: also set the daemon-side Nix setting in
-  #    /etc/nix/nix.conf, so fixed-output fetches (fetchFromGitHub, buildGoModule
-  #    vendoring, flake inputs) trust the combined bundle even if the daemon's
-  #    launchd environment is stale. nix-daemon reads this at startup, so it only
-  #    takes effect after the daemon restarts (darwin-rebuild switch restarts it
-  #    on a nix.conf change).
-  #nix.settings.ssl-cert-file = "/etc/ssl/certs/ca-certificates.crt";
+  # Daemon-side. The launchd plist also sets NIX_SSL_CERT_FILE to caBundle;
+  # this keeps fixed-output fetches working if that environment is missing.
+  # darwin-rebuild restarts nix-daemon when nix.conf changes.
+  nix.settings.ssl-cert-file = caBundle;
 
   nix.optimise = {
     automatic = true;
