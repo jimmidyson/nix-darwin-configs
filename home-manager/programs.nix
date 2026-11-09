@@ -334,6 +334,9 @@
     zed-editor = {
       enable = true;
       userSettings = {
+        buffer_font_size = 13;
+        ui_font_size = 14;
+        terminal.font_size = 13;
         agent_servers = {
           OpenCode = {
             type = "custom";
