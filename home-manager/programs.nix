@@ -145,11 +145,18 @@
       context = ''
         - Prefer concise, idiomatic implementations.
         - Verify changes with LSP diagnostics and local test runners before finalizing.
+        - Never add Co-Authored-By, Generated-with, or any attribution trailers/footers to git commits or PR bodies.
       '';
-  
+
       # Written to ~/.config/opencode/opencode.json ($schema is added automatically)
       settings = {
         model = "nai/ntnx-muse-spark";
+
+        # Disable automatic Co-Authored-By / Generated-with footers in commits/PRs (Zed ACP).
+        # Covers upstream sst/opencode, dbirks fork, and oh-my-opencode naming variants.
+        includeCoAuthoredBy = false;
+        include_co_authored_by = false;
+        disable_ai_attribution = true;
 
         update = "auto";
   
