@@ -15,7 +15,7 @@
       "modify-secret"
       "ollama"
       "omp"
-      "opencode"
+      # "opencode"
       "pinentry-mac"
       "socket_vmnet"
       "watch"
@@ -56,7 +56,7 @@
       "iterm2"
       "notunes"
       "ollama-app"
-      "opencode-desktop"
+      # "opencode-desktop"
       # "skhd-zig"
       #"tailscale-app"
     ];

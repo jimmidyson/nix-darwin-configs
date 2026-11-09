@@ -128,6 +128,173 @@
       keyScheme = "vim";
     };
 
+    opencode = {
+      enable = true;
+  
+      # Optional: Automatically wire any servers defined in `programs.mcp.servers`
+      enableMcpIntegration = true;
+  
+      # Optional: Make extra CLI tools (e.g., ripgrep, fd, jq) available to OpenCode's runtime PATH
+      extraPackages = with pkgs; [
+        ripgrep
+        fd
+        jq
+      ];
+  
+      # Global instructions written to ~/.config/opencode/AGENTS.md
+      context = ''
+        - Prefer concise, idiomatic implementations.
+        - Verify changes with LSP diagnostics and local test runners before finalizing.
+      '';
+  
+      # Written to ~/.config/opencode/opencode.json ($schema is added automatically)
+      settings = {
+        model = "nai/ntnx-muse-spark";
+
+        update = "auto";
+  
+        permissions = [
+          {
+            action = "edit";
+            resource = "*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "*";
+            effect = "ask";
+          }
+          # Allow safe read-only git/nix/search commands without prompting
+          {
+            action = "shell";
+            resource = "git status *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "git diff *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "rg *";
+            effect = "allow";
+          }
+          {
+            action = "external_directory";
+            resource = "*";
+            effect = "ask";
+          }
+        ];
+  
+        compaction = {
+          auto = true;
+          buffer = "15%"; # Trigger compaction when 85% of context window is reached
+          keep = {
+            tokens = 15000; # Retain ~15k tokens of verbatim recent turns alongside the checkpoint summary
+          };
+        };
+
+        experimental = {
+          background_compaction = true;
+          subagent_depth = 2;
+        };
+  
+        providers = {
+          nai = {
+            name = "Nutanix Enterprise AI Gateway";
+            package = "@opencode/ai/providers/openai-compatible";
+            env = [ "NAI_GATEWAY_API_KEY" ];
+            settings = {
+              baseURL = "https://tokens.corp.nutanix.com/enterpriseai/gateway/v1/";
+              apiKey = "{env:NAI_GATEWAY_API_KEY}";
+              headerTimeout = 300000;
+            };
+            models = {
+              "ntnx-beam" = {
+                modelID = "ntnx-beam";
+                name = "NAI: Beam";
+                capabilities = {
+                  tools = true;
+                  input = [ "text" ];
+                  output = [ "text" ];
+                };
+                limit = {
+                  context = 1048576;
+                  output = 128000;
+                };
+              };
+              "ntnx-laguna-s-2-1" = {
+                modelID = "ntnx-laguna-s-2-1";
+                name = "NAI: Laguna S 2.1";
+                capabilities = {
+                  tools = true;
+                  input = [ "text" ];
+                  output = [ "text" ];
+                };
+                limit = {
+                  context = 262144;
+                  output = 32768;
+                };
+              };
+              "ntnx-muse-glimmer" = {
+                modelID = "ntnx-muse-glimmer";
+                name = "NAI: Muse Glimmer";
+                capabilities = {
+                  tools = true;
+                  input = [ "text" ];
+                  output = [ "text" ];
+                };
+                limit = {
+                  context = 131072;
+                  output = 32768;
+                };
+              };
+              "ntnx-muse-spark" = {
+                modelID = "ntnx-muse-spark";
+                name = "NAI: Muse Spark"; 
+                capabilities = {
+                  tools = true;
+                  input = [ "text" ];
+                  output = [ "text" ];
+                };
+                limit = {
+                  context = 1048576;
+                  output = 128000;
+                };
+              };
+              "ntnx-nemotron3-super" = {
+                modelID = "ntnx-nemotron3-super";
+                name = "NAI: Muse Nemotron3 Super"; 
+                capabilities = {
+                  tools = true;
+                  input = [ "text" ];
+                  output = [ "text" ];
+                };
+                limit = {
+                  context = 262144;
+                  output = 32768;
+                };
+              };
+            };
+          };
+        };
+
+        policies = [
+          {
+            action = "provider.use";
+            resource = "*";
+            effect = "deny";
+          }
+          {
+            action = "provider.use";
+            resource = "nai";
+            effect = "allow";
+          }
+        ];
+      };
+    };
+
     starship = {
       enable = true;
       settings = {
@@ -155,6 +322,22 @@
       '';
 
       tmuxp.enable = true;
+    };
+  
+    zed-editor = {
+      enable = true;
+      userSettings = {
+        agent_servers = {
+          OpenCode = {
+            type = "custom";
+            command = "op";
+            args = ["run" "--" "opencode" "acp"];
+            env = {
+              NAI_GATEWAY_API_KEY = "op://Private/Nutanix AI Gateway/credential";
+            };
+          };
+        };
+      };
     };
 
     zoxide = {
