@@ -98,6 +98,8 @@ in {
     libarchive
     # lima
     mosh
+    nixd
+    nixfmt
     nixpkgs-fmt
     nmap
     nodejs

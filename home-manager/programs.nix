@@ -1,4 +1,4 @@
-{ pkgs, config, ... }:
+{ pkgs, config, lib, ... }:
 {
   programs = {
     awscli = {
@@ -344,6 +344,13 @@
             args = ["run" "--" "opencode" "acp"];
             env = {
               NAI_GATEWAY_API_KEY = "op://Private/Nutanix AI Gateway/credential";
+            };
+          };
+        };
+        lsp = {
+          nixd = {
+            binary = {
+              path = lib.getExe pkgs.nixd;
             };
           };
         };
