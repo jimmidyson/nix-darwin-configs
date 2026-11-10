@@ -412,6 +412,30 @@
       };
     };
 
+    mcp = {
+      enable = true;
+      servers = {
+        serena = {
+          # Serena — semantic code retrieval/editing via LSP (https://github.com/oraios/serena).
+          # Uses uvx to fetch the latest pypi release; uvx caches by version and updates on next fetch.
+          # Pin with `serena-agent==2.1.0` if you need reproducibility; otherwise track latest.
+          # opencode's enableMcpIntegration merges this into ~/.config/opencode/opencode.json as `mcp.serena`.
+          # Context `ide` is the recommended minimal-toolset for IDE/terminal agents (vs. desktop-app/claude-code).
+          # --project-from-cwd auto-activates the project from the current working directory (nearest .git/.serena).
+          command = "${pkgs.uv}/bin/uvx";
+          args = [
+            "--from"
+            "serena-agent"
+            "serena"
+            "start-mcp-server"
+            "--context"
+            "ide"
+            "--project-from-cwd"
+          ];
+        };
+      };
+    };
+
     starship = {
       enable = true;
       settings = {
