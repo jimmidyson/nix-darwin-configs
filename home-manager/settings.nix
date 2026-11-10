@@ -1,10 +1,11 @@
-{ config, pkgs, home-manager, tuicr, ... }:
-
+{ home-manager, tuicr, ... }:
 {
   imports = [
     home-manager.darwinModules.home-manager
   ];
-  home-manager.useGlobalPkgs = true;
-  home-manager.backupFileExtension = "backup";
-  home-manager.extraSpecialArgs = { inherit tuicr; };
+  home-manager = {
+    useGlobalPkgs = true;
+    backupFileExtension = "backup";
+    extraSpecialArgs = { inherit tuicr; };
+  };
 }

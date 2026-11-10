@@ -1,5 +1,23 @@
-{ pkgs, config, lib, ... }:
-{
+{ pkgs, lib, ... }:
+let
+  personalKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMNOtzmH4CEiLsg0zU45n7ytZz921zlJlrVWXOW0SV2E";
+  workKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPubUu24yDLddpTzZTN4Cg8Z2Bix6khiWrBNtYkUDs3Y";
+
+  mkInclude = condition: hostAlias: signingKey: {
+    inherit condition;
+    contents = {
+      url = {
+        "git@${hostAlias}:" = {
+          insteadOf = [
+            "https://github.com/"
+            "git@github.com:"
+          ];
+        };
+      };
+      user = { inherit signingKey; };
+    };
+  };
+in {
   home.packages = [ pkgs.git-lfs ];
 
   programs.git = {
@@ -10,7 +28,7 @@
       user = {
         name = "Jimmi Dyson";
         email = "jimmidyson@gmail.com";
-        signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMNOtzmH4CEiLsg0zU45n7ytZz921zlJlrVWXOW0SV2E";
+        signingKey = personalKey;
       };
 
       alias = {
@@ -21,10 +39,7 @@
       core = {
         autocrlf = "input";
         editor = "vim";
-        # fsmonitor = true;
-        # untrackedcache = true;
       };
-      # fsmonitor.socketDir = "/Users/jimmi.dyson/.git-fsmonitor-tmp";
       rerere.enabled = true;
       tag = {
         forceSignAnnotated = true;
@@ -53,75 +68,15 @@
       "*~"
       "*.swp"
       ".history/"
-      ".pythom-version/"
+      ".python-version/"
       ".idea/"
     ];
 
     includes = [
-      {
-        condition = "hasconfig:remote.*.url:git@github.com:nutanix-ncn/**";
-        contents = {
-          url = {
-            "git@workgit:" = {
-              insteadOf = [
-                "https://github.com/"
-                "git@github.com:"
-              ];
-            };
-          };
-          user = {
-            signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPubUu24yDLddpTzZTN4Cg8Z2Bix6khiWrBNtYkUDs3Y";
-          };
-        };
-      }
-      {
-        condition = "hasconfig:remote.*.url:https://github.com/nutanix-ncn/**";
-        contents = {
-          url = {
-            "git@workgit:" = {
-              insteadOf = [
-                "https://github.com/"
-                "git@github.com:"
-              ];
-            };
-          };
-          user = {
-            signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPubUu24yDLddpTzZTN4Cg8Z2Bix6khiWrBNtYkUDs3Y";
-          };
-        };
-      }
-      {
-        condition = "hasconfig:remote.*.url:git@github.com:*/**";
-        contents = {
-          url = {
-            "git@personalgit:" = {
-              insteadOf = [
-                "https://github.com/"
-                "git@github.com:"
-              ];
-            };
-          };
-          user = {
-            signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMNOtzmH4CEiLsg0zU45n7ytZz921zlJlrVWXOW0SV2E";
-          };
-        };
-      }
-      {
-        condition = "hasconfig:remote.*.url:https://github.com/**/**";
-        contents = {
-          url = {
-            "git@personalgit:" = {
-              insteadOf = [
-                "https://github.com/"
-                "git@github.com:"
-              ];
-            };
-          };
-          user = {
-            signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMNOtzmH4CEiLsg0zU45n7ytZz921zlJlrVWXOW0SV2E";
-          };
-        };
-      }
+      (mkInclude "hasconfig:remote.*.url:git@github.com:nutanix-ncn/**" "workgit" workKey)
+      (mkInclude "hasconfig:remote.*.url:https://github.com/nutanix-ncn/**" "workgit" workKey)
+      (mkInclude "hasconfig:remote.*.url:git@github.com:*/**" "personalgit" personalKey)
+      (mkInclude "hasconfig:remote.*.url:https://github.com/**/**" "personalgit" personalKey)
     ];
 
     lfs = {

@@ -1,4 +1,4 @@
-{ pkgs, config, lib, ... }:
+{ pkgs, lib, ... }:
 {
   programs = {
     awscli = {
@@ -50,12 +50,12 @@
 
         (pkgs.stdenv.mkDerivation {
           pname = "gh-context";
-          version = "latest";
+          version = "unstable-2026-11-10";
 
           src = pkgs.fetchFromGitHub {
             owner = "automationpi";
             repo = "gh-context";
-            rev = "main";
+            rev = "04ca9a85fe39e6d72ddaf3e242b7830ddd8679c9";
             hash = "sha256-97srG/x7xkS9/dgf0w+o1TKJk8wdeHCrPe4+1QU9K1M=";
           };
 
@@ -321,7 +321,7 @@
       historyLimit = 10000;
       keyMode = "vi";
       mouse = true;
-      terminal = "screen-screen256";
+      terminal = "screen-256color";
 
       extraConfig = ''
         bind-key -T copy-mode MouseDragEnd1Pane send-keys -X copy-selection

@@ -4,7 +4,7 @@ Nix configuration for my machines.
 
 | Host | Platform | Managed by | Entry point |
 | --- | --- | --- | --- |
-| `V26M4P9FDJ` | `aarch64-darwin` | nix-darwin (+ home-manager as a nix-darwin module) | `nutanix-macbook-pro.nix` |
+| `H6GQ16XX6K` | `aarch64-darwin` | nix-darwin (+ home-manager as a nix-darwin module) | `nutanix-macbook-pro.nix` |
 | `jimmi-dyson.r8.ubvm.nutanix.com` | `x86_64-linux` (Rocky 8) | standalone home-manager | `nutanix-linux-vm.nix` |
 
 ## Layout
@@ -31,7 +31,7 @@ platforms, so anything macOS-specific in them is guarded with
 ## macOS
 
 ```sh
-darwin-rebuild switch --flake .#V26M4P9FDJ
+darwin-rebuild switch --flake .#H6GQ16XX6K
 ```
 
 ## Linux

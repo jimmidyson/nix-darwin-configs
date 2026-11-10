@@ -2,8 +2,7 @@
   description = "jimmidyson nix config";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    flake-utils.url = "github:numtide/flake-utils";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     darwin.url = "github:LnL7/nix-darwin/master";
     darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager = {
@@ -18,7 +17,6 @@
                      nixpkgs,
                      darwin,
                      home-manager,
-                     flake-utils,
                      nix-auth,
                      tuicr,
                      ... }:
@@ -61,14 +59,16 @@
         ];
       };
     };
-  }
-  // flake-utils.lib.eachDefaultSystem (system: let
-    pkgs = mkPkgs system;
 
-    in {
     # Locally packaged tools not (yet) in nixpkgs. Also consumed by
     # home-manager via home-manager/base.nix.
-    packages.backport = pkgs.callPackage ./pkgs/backport.nix { };
-    packages.troubleshoot-live = pkgs.callPackage ./pkgs/troubleshoot-live.nix { };
-  });
+    packages = nixpkgs.lib.genAttrs
+      [ "aarch64-darwin" "aarch64-linux" "x86_64-darwin" "x86_64-linux" ]
+      (system: let
+        pkgs = mkPkgs system;
+      in {
+        backport = pkgs.callPackage ./pkgs/backport.nix { };
+        troubleshoot-live = pkgs.callPackage ./pkgs/troubleshoot-live.nix { };
+      });
+  };
 }

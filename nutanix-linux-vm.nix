@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+_:
 
 # Nutanix Rocky Linux 8 VM (jimmi-dyson.r8.ubvm.nutanix.com).
 #

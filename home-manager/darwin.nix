@@ -1,9 +1,5 @@
-{ config, pkgs, tuicr, ... }:
-
-let
-  system = pkgs.system;
-  homeDir = config.home.homeDirectory;
-in {
+{ pkgs, tuicr, ... }:
+{
   imports = [
     ./base.nix
   ];

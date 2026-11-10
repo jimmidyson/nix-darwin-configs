@@ -1,4 +1,4 @@
-{ config, pkgs, lib, home-manager, ... }:
+{ config, pkgs, home-manager, ... }:
 
 
 let
@@ -6,19 +6,14 @@ let
   username = "jimmi.dyson";
 in {
   imports = [
-    roles/m1.nix
+    roles/extra-platforms.nix
     roles/defaults.nix
     roles/brew.nix
-    #roles/yabai.nix
-    #roles/skhd.nix
     home-manager/settings.nix
   ];
 
   # Define user settings
-  users.users.${username} = import roles/user.nix {
-    inherit config;
-    inherit pkgs;
-  };
+  users.users.${username} = import roles/user.nix;
 
   # Home-Manager config
   home-manager = {
@@ -36,14 +31,9 @@ in {
   # Set hostname
   networking.hostName = "${hostname}";
 
-  # Applications specific to this machine
-  homebrew = {
-    brews = [
-    ];
-    casks = [
-    ];
-  };
-
+  # This value determines the Nix Darwin release from which the default
+  # settings for stateful data were taken. It should never be changed after
+  # the initial install (see nix-darwin docs for system.stateVersion).
   system.stateVersion = 4;
 
   system.primaryUser = "jimmi.dyson";
