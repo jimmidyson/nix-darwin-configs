@@ -171,7 +171,7 @@
             resource = "*";
             effect = "ask";
           }
-          # Allow safe read-only git/nix/search commands without prompting
+          # Allow read-only git commands without prompting; destructive/mutating fall through to ask
           {
             action = "shell";
             resource = "git status *";
@@ -180,6 +180,116 @@
           {
             action = "shell";
             resource = "git diff *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "git log *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "git show *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "git ls-files *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "git ls-tree *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "git cat-file *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "git rev-parse *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "git rev-list *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "git grep *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "git blame *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "git shortlog *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "git describe *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "git name-rev *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "git merge-base *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "git for-each-ref *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "git count-objects *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "git branch --list *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "git tag --list *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "git tag -l *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "git remote -v *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "git remote get-url *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "git config --get *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "git config --list *";
             effect = "allow";
           }
           {
