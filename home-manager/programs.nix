@@ -161,35 +161,191 @@
         update = "auto";
 
         permissions = [
+          # Base filesystem
           {
             action = "edit";
             resource = "*";
             effect = "allow";
           }
           {
+            action = "read";
+            resource = "*";
+            effect = "allow";
+          }
+          {
+            action = "grep";
+            resource = "*";
+            effect = "allow";
+          }
+          {
+            action = "glob";
+            resource = "*";
+            effect = "allow";
+          }
+          {
+            action = "external_directory";
+            resource = "*";
+            effect = "ask";
+          }
+          {
+            action = "shell";
+            resource = "rg *";
+            effect = "allow";
+          }
+
+          # Sensitive file blacklists (deny even inside project) + .env.example exception
+          {
+            action = "read";
+            resource = "*.env*";
+            effect = "deny";
+          }
+          {
+            action = "read";
+            resource = "*id_rsa*";
+            effect = "deny";
+          }
+          {
+            action = "read";
+            resource = "*credentials*";
+            effect = "deny";
+          }
+          {
+            action = "read";
+            resource = "*.pem";
+            effect = "deny";
+          }
+          {
+            action = "edit";
+            resource = "*.env*";
+            effect = "deny";
+          }
+          {
+            action = "edit";
+            resource = "*id_rsa*";
+            effect = "deny";
+          }
+          {
+            action = "edit";
+            resource = "*credentials*";
+            effect = "deny";
+          }
+          {
+            action = "edit";
+            resource = "*.pem";
+            effect = "deny";
+          }
+          {
+            action = "read";
+            resource = "*.env.example";
+            effect = "allow";
+          }
+          {
+            action = "edit";
+            resource = "*.env.example";
+            effect = "allow";
+          }
+
+          # Shell baseline + narrow allowlist (no traversal guards; use allowlist instead)
+          {
             action = "shell";
             resource = "*";
             effect = "ask";
           }
-          # Allow read-only git commands without prompting; destructive/mutating fall through to ask
           {
             action = "shell";
-            resource = "git status *";
+            resource = "cat * > *";
+            effect = "ask";
+          }
+          {
+            action = "shell";
+            resource = "cat * >> *";
+            effect = "ask";
+          }
+          {
+            action = "shell";
+            resource = "echo * > *";
+            effect = "ask";
+          }
+          {
+            action = "shell";
+            resource = "echo * >> *";
+            effect = "ask";
+          }
+          {
+            action = "shell";
+            resource = "cat ./*";
             effect = "allow";
           }
           {
             action = "shell";
-            resource = "git diff *";
+            resource = "head ./*";
             effect = "allow";
           }
           {
             action = "shell";
-            resource = "git log *";
+            resource = "tail ./*";
             effect = "allow";
           }
           {
             action = "shell";
-            resource = "git show *";
+            resource = "grep * ./*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "rg * ./*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "find ./*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "diff *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "ls *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "wc *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "uname *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "which *";
+            effect = "allow";
+          }
+
+          # Git & GitHub CLI (read-only)
+          {
+            action = "shell";
+            resource = "git status*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "git log*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "git diff*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "git show*";
             effect = "allow";
           }
           {
@@ -209,7 +365,7 @@
           }
           {
             action = "shell";
-            resource = "git rev-parse *";
+            resource = "git rev-parse*";
             effect = "allow";
           }
           {
@@ -234,7 +390,7 @@
           }
           {
             action = "shell";
-            resource = "git describe *";
+            resource = "git describe*";
             effect = "allow";
           }
           {
@@ -244,7 +400,7 @@
           }
           {
             action = "shell";
-            resource = "git merge-base *";
+            resource = "git merge-base*";
             effect = "allow";
           }
           {
@@ -264,12 +420,12 @@
           }
           {
             action = "shell";
-            resource = "git tag --list *";
+            resource = "git branch*";
             effect = "allow";
           }
           {
             action = "shell";
-            resource = "git tag -l *";
+            resource = "git remote*";
             effect = "allow";
           }
           {
@@ -294,14 +450,338 @@
           }
           {
             action = "shell";
-            resource = "rg *";
+            resource = "gh pr list*";
             effect = "allow";
           }
           {
-            action = "external_directory";
-            resource = "*";
+            action = "shell";
+            resource = "gh pr view*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "gh issue list*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "gh issue view*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "git push*";
             effect = "ask";
           }
+          {
+            action = "shell";
+            resource = "git commit*";
+            effect = "ask";
+          }
+          {
+            action = "shell";
+            resource = "git reset*";
+            effect = "ask";
+          }
+          {
+            action = "shell";
+            resource = "git checkout*";
+            effect = "ask";
+          }
+          {
+            action = "shell";
+            resource = "git switch*";
+            effect = "ask";
+          }
+          {
+            action = "shell";
+            resource = "git clean*";
+            effect = "ask";
+          }
+          {
+            action = "shell";
+            resource = "git tag*";
+            effect = "ask";
+          }
+
+          # Go toolchain
+          {
+            action = "shell";
+            resource = "go version*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "go env*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "go list*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "go doc*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "go vet*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "go test*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "go build*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "golangci-lint run*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "go get*";
+            effect = "ask";
+          }
+          {
+            action = "shell";
+            resource = "go mod tidy*";
+            effect = "ask";
+          }
+          {
+            action = "shell";
+            resource = "go install*";
+            effect = "ask";
+          }
+
+          # Kubernetes (kubectl)
+          {
+            action = "shell";
+            resource = "kubectl version*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "kubectl config view*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "kubectl config current-context*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "kubectl config get-contexts*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "kubectl api-resources*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "kubectl api-versions*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "kubectl get *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "kubectl describe *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "kubectl diff *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "kubectl explain *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "kubectl logs *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "kubectl get secret*";
+            effect = "ask";
+          }
+          {
+            action = "shell";
+            resource = "kubectl get secrets*";
+            effect = "ask";
+          }
+          {
+            action = "shell";
+            resource = "kubectl exec*";
+            effect = "ask";
+          }
+          {
+            action = "shell";
+            resource = "kubectl port-forward*";
+            effect = "ask";
+          }
+          {
+            action = "shell";
+            resource = "kubectl apply*";
+            effect = "ask";
+          }
+          {
+            action = "shell";
+            resource = "kubectl create*";
+            effect = "ask";
+          }
+          {
+            action = "shell";
+            resource = "kubectl edit*";
+            effect = "ask";
+          }
+          {
+            action = "shell";
+            resource = "kubectl patch*";
+            effect = "ask";
+          }
+          {
+            action = "shell";
+            resource = "kubectl delete*";
+            effect = "ask";
+          }
+          {
+            action = "shell";
+            resource = "kubectl config use-context*";
+            effect = "ask";
+          }
+
+          # Rust
+          {
+            action = "shell";
+            resource = "cargo --version*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "cargo check*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "cargo clippy*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "cargo test*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "cargo build*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "cargo tree*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "cargo metadata*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "cargo publish*";
+            effect = "ask";
+          }
+          {
+            action = "shell";
+            resource = "cargo install*";
+            effect = "ask";
+          }
+          {
+            action = "shell";
+            resource = "cargo clean*";
+            effect = "ask";
+          }
+
+          # Node
+          {
+            action = "shell";
+            resource = "npm -v*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "npm list*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "npm test*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "npm run test*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "npm run lint*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "npm run check*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "pnpm test*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "yarn test*";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "npm install*";
+            effect = "ask";
+          }
+          {
+            action = "shell";
+            resource = "npm run build*";
+            effect = "ask";
+          }
+          {
+            action = "shell";
+            resource = "npm publish*";
+            effect = "ask";
+          }
+          {
+            action = "shell";
+            resource = "npx *";
+            effect = "ask";
+          }
+
         ];
 
         compaction = {
@@ -407,6 +887,46 @@
             action = "provider.use";
             resource = "nai";
             effect = "allow";
+          }
+          {
+            action = "tool.use";
+            resource = "read:../*";
+            effect = "deny";
+          }
+          {
+            action = "tool.use";
+            resource = "external_directory:*";
+            effect = "deny";
+          }
+          {
+            action = "tool.use";
+            resource = "shell:sudo *";
+            effect = "deny";
+          }
+          {
+            action = "tool.use";
+            resource = "shell:rm -rf /*";
+            effect = "deny";
+          }
+          {
+            action = "tool.use";
+            resource = "shell:git push *--force*";
+            effect = "deny";
+          }
+          {
+            action = "tool.use";
+            resource = "shell:kubectl delete namespace *";
+            effect = "deny";
+          }
+          {
+            action = "tool.use";
+            resource = "shell:kubectl delete all *";
+            effect = "deny";
+          }
+          {
+            action = "tool.use";
+            resource = "shell:kubectl drain *";
+            effect = "deny";
           }
         ];
       };
