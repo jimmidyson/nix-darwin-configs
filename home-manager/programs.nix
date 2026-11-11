@@ -910,7 +910,52 @@
           }
           {
             action = "tool.use";
-            resource = "shell:git push *--force*";
+            resource = "shell:git push * main *--force*";
+            effect = "deny";
+          }
+          {
+            action = "tool.use";
+            resource = "shell:git push * --force* * main *";
+            effect = "deny";
+          }
+          {
+            action = "tool.use";
+            resource = "shell:git push * master *--force*";
+            effect = "deny";
+          }
+          {
+            action = "tool.use";
+            resource = "shell:git push * --force* * master *";
+            effect = "deny";
+          }
+          {
+            action = "tool.use";
+            resource = "shell:git push * develop *--force*";
+            effect = "deny";
+          }
+          {
+            action = "tool.use";
+            resource = "shell:git push * --force* * develop *";
+            effect = "deny";
+          }
+          {
+            action = "tool.use";
+            resource = "shell:git push * release/* *--force*";
+            effect = "deny";
+          }
+          {
+            action = "tool.use";
+            resource = "shell:git push * --force* * release/* *";
+            effect = "deny";
+          }
+          {
+            action = "tool.use";
+            resource = "shell:git push * release* *--force*";
+            effect = "deny";
+          }
+          {
+            action = "tool.use";
+            resource = "shell:git push * --force* * release* *";
             effect = "deny";
           }
           {
