@@ -160,6 +160,139 @@
 
         update = "auto";
 
+        agents = {
+          query = {
+            description = "Read-only query mode - answer questions without editing files";
+            mode = "primary";
+            system = "You are in read-only query mode. Answer questions, explain code, and propose plans. Do not edit, write, patch, or run mutating shell commands. If changes are needed, describe them as text or a plan for the user to approve.";
+            permissions = [
+              {
+                action = "edit";
+                resource = "*";
+                effect = "deny";
+              }
+              {
+                action = "shell";
+                resource = "*";
+                effect = "deny";
+              }
+              # Read-only shell allowlist (add more as needed)
+              {
+                action = "shell";
+                resource = "ls *";
+                effect = "allow";
+              }
+              {
+                action = "shell";
+                resource = "cat *";
+                effect = "allow";
+              }
+              {
+                action = "shell";
+                resource = "head *";
+                effect = "allow";
+              }
+              {
+                action = "shell";
+                resource = "tail *";
+                effect = "allow";
+              }
+              {
+                action = "shell";
+                resource = "grep *";
+                effect = "allow";
+              }
+              {
+                action = "shell";
+                resource = "rg *";
+                effect = "allow";
+              }
+              {
+                action = "shell";
+                resource = "rg * ./*";
+                effect = "allow";
+              }
+              {
+                action = "shell";
+                resource = "find ./*";
+                effect = "allow";
+              }
+              {
+                action = "shell";
+                resource = "diff *";
+                effect = "allow";
+              }
+              {
+                action = "shell";
+                resource = "wc *";
+                effect = "allow";
+              }
+              {
+                action = "shell";
+                resource = "git status*";
+                effect = "allow";
+              }
+              {
+                action = "shell";
+                resource = "git log*";
+                effect = "allow";
+              }
+              {
+                action = "shell";
+                resource = "git diff*";
+                effect = "allow";
+              }
+              {
+                action = "shell";
+                resource = "git show*";
+                effect = "allow";
+              }
+              {
+                action = "shell";
+                resource = "git branch*";
+                effect = "allow";
+              }
+              {
+                action = "shell";
+                resource = "git ls-files *";
+                effect = "allow";
+              }
+              {
+                action = "shell";
+                resource = "git ls-tree *";
+                effect = "allow";
+              }
+              {
+                action = "shell";
+                resource = "git grep *";
+                effect = "allow";
+              }
+              {
+                action = "shell";
+                resource = "git blame *";
+                effect = "allow";
+              }
+              # Restrict MCP writes (keep reads allowed)
+              {
+                action = "jira-write_*";
+                resource = "*";
+                effect = "deny";
+              }
+              # Subagents - only allow explore for read-only research
+              {
+                action = "subagent";
+                resource = "*";
+                effect = "deny";
+              }
+              {
+                action = "subagent";
+                resource = "explore";
+                effect = "allow";
+              }
+            ];
+          };
+        };
+
         permissions = [
           # Base filesystem
           {
