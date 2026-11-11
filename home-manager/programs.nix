@@ -253,42 +253,32 @@
           }
           {
             action = "shell";
-            resource = "cat * > *";
-            effect = "ask";
-          }
-          {
-            action = "shell";
-            resource = "cat * >> *";
-            effect = "ask";
-          }
-          {
-            action = "shell";
-            resource = "echo * > *";
-            effect = "ask";
-          }
-          {
-            action = "shell";
-            resource = "echo * >> *";
-            effect = "ask";
-          }
-          {
-            action = "shell";
-            resource = "cat ./*";
+            resource = "echo *";
             effect = "allow";
           }
           {
             action = "shell";
-            resource = "head ./*";
+            resource = "printf *";
             effect = "allow";
           }
           {
             action = "shell";
-            resource = "tail ./*";
+            resource = "cat *";
             effect = "allow";
           }
           {
             action = "shell";
-            resource = "grep * ./*";
+            resource = "head *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "tail *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "grep *";
             effect = "allow";
           }
           {
@@ -325,6 +315,61 @@
             action = "shell";
             resource = "which *";
             effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "sort *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "uniq *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "cut *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "tr *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "column *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "jq *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "yq *";
+            effect = "allow";
+          }
+          {
+            action = "shell";
+            resource = "cat * > *";
+            effect = "ask";
+          }
+          {
+            action = "shell";
+            resource = "cat * >> *";
+            effect = "ask";
+          }
+          {
+            action = "shell";
+            resource = "echo * > *";
+            effect = "ask";
+          }
+          {
+            action = "shell";
+            resource = "echo * >> *";
+            effect = "ask";
           }
 
           # Git & GitHub CLI (read-only)
