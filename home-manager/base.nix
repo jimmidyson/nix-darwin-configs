@@ -65,6 +65,7 @@
       lefthook
       libarchive
       mosh
+      nil
       nixd
       nixfmt
       nmap
